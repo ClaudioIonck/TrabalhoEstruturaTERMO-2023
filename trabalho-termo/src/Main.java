@@ -1,12 +1,7 @@
-public class Main
-{
-    public static void main(String[] args)
-    {
-        System.out.println("Hello world!");
+import static DbConnection.DbConfig.lerDadosDaTabela;
+
+public class Main {
+    public static void main(String[] args) {
+        lerDadosDaTabela();
     }
-
-
-
-
-
 }
