@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class Main
@@ -11,21 +12,34 @@ public class Main
 
         if(modo == 1)
         {
-
             //Gerando array de decisões
             int[] posicoesCorretas = GerarPosicoesCorretas(scanner);
-
-            MostrarArray_Int("Posições corretas", posicoesCorretas);
-
-
 
 
             //Gerando letras e palavras disponíveis
             ArrayList<String> letrasDisponiveis = GerarLetras();
-            MostrarLista_String("Letras disponíveis", letrasDisponiveis);
-
             ArrayList<String> palavrasDisponiveis = GerarPalavras();
-            MostrarLista_String("Palavras disponíveis", palavrasDisponiveis);
+
+
+            boolean isCorrectAwnser = false;
+
+
+            while(!isCorrectAwnser)
+            {
+
+                MostrarLista_String("Palavras disponíveis", palavrasDisponiveis);
+                MostrarArray_Int("Posições corretas", posicoesCorretas);
+                MostrarLista_String("Letras disponíveis", letrasDisponiveis);
+
+                ArrayList<String> palavrasFiltradas = FiltrarPorLetra(palavrasDisponiveis, letrasDisponiveis);
+
+
+                MostrarLista_String("Palavras filtradas", palavrasFiltradas);
+
+                break;
+
+            }
+
 
 
 
@@ -71,6 +85,27 @@ public class Main
     {
         ArrayList<String> letrasDisponiveis = new ArrayList<>();
 
+        letrasDisponiveis.add("Á");
+        letrasDisponiveis.add("À");
+        letrasDisponiveis.add("Â");
+        letrasDisponiveis.add("Ã");
+        letrasDisponiveis.add("Ç");
+        letrasDisponiveis.add("É");
+        letrasDisponiveis.add("È");
+        letrasDisponiveis.add("Ê");
+        letrasDisponiveis.add("Í");
+        letrasDisponiveis.add("Ì");
+        letrasDisponiveis.add("Î");
+        letrasDisponiveis.add("Ñ");
+        letrasDisponiveis.add("Ó");
+        letrasDisponiveis.add("Ò");
+        letrasDisponiveis.add("Ô");
+        letrasDisponiveis.add("Õ");
+        letrasDisponiveis.add("Ú");
+        letrasDisponiveis.add("ú");
+        letrasDisponiveis.add("Ù");
+        letrasDisponiveis.add("ù");
+        letrasDisponiveis.add("Û");
         letrasDisponiveis.add("A");
         letrasDisponiveis.add("B");
         letrasDisponiveis.add("C");
@@ -97,6 +132,7 @@ public class Main
         letrasDisponiveis.add("X");
         letrasDisponiveis.add("Y");
         letrasDisponiveis.add("Z");
+
 
 
         return letrasDisponiveis;
@@ -233,11 +269,60 @@ public class Main
     //Filtros
     private static ArrayList<String> FiltrarPorLetra(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis)
     {
-        ArrayList<String> palavrasFiltradas = new ArrayList<>();
+        //Declarando lista filtrada de retorno
+        //ArrayList<String> palavrasFiltradas = new ArrayList<>();
+
+        //Passando pela lista de palavras recebida
+        for (int z = 0; z < palavrasDisponiveis.size(); z++)
+        {
+            String palavra = palavrasDisponiveis.get(z);
+
+            if(palavra == "histérico")
+            {
+                System.out.println("aqui");
+            }
+
+            //Passando pelos caracteres da palavra
+            for (int a = 0; a < palavra.length(); a++) {
+
+                String caractere = Character.toString(palavra.charAt(a));
+
+                boolean existeLetra = false;
+
+                //Passando pelas letras disponíveis
+                for(int b = 0; b < letrasDisponiveis.size(); b++)
+                {
+                    String letra = letrasDisponiveis.get(b);
+
+                    String actLetraPalavra  = caractere.toUpperCase().trim();
+                    String actLetraList = letra.toUpperCase().trim();
 
 
+                    //Verificando se a letra está na lista de letras
+                    if (actLetraPalavra.equalsIgnoreCase(actLetraList))
+                    {
+                        existeLetra = true;
+                        break;
+                    }
 
-        return palavrasFiltradas;
+
+                }
+
+                //Se a letra não foi encontrada
+                if(!existeLetra)
+                {
+                    //Remova a palavra
+                    palavrasDisponiveis.remove(z);
+                    z = z - 1;
+                    break;
+                }
+
+            }
+
+        }
+
+
+        return palavrasDisponiveis;
     }
 
 
