@@ -52,14 +52,24 @@ public class Main
                 }
 
 
+
+
                 //Usuário verifica quais posições estão corretas
                 System.out.println("\n\n\nDigite 2 para as posições das letras que EXISTEM mas que estão em uma posição incorreta na sua palavra.");
                 System.out.println("Digite 1 para as posições das letras que EXISTEM na sua palavra.");
                 System.out.println("Digite 0 para as posições das letras que NÃO EXISTEM na sua palavra.");
 
-                System.out.println("\nDigite separando por vírgulas desta forma: 0,0,1,2,0\n\n");
+                System.out.println("\nDigite separando por vírgulas desta forma: 0,0,1,2,0\n");
+                MostrarArray_Int("Posições corretas", posicoesCorretas);
 
-                break;
+                //Metódo para transformar resposta do usuário em um array
+                posicoesCorretas = TransformarPosicoesEmArray(posicoesCorretas);
+
+                MostrarArray_Int("Posições corretas", posicoesCorretas);
+
+
+
+                //break;
 
             }
 
@@ -114,20 +124,66 @@ public class Main
     //Geradores--------------------------------------------------------------------------------------------------------
     private static int[] GerarPosicoesCorretas(Scanner scanner)
     {
-        // Solicitar um número ao usuário
+        //Solicitar um número ao usuário
         System.out.print("Informe a quantidade de letras das palavras que você deseja gerar: ");
         int tamanhoArray = scanner.nextInt();
 
-        // Gerar array de inteiros com o tamanho informado
+        //Gerar array de inteiros com o tamanho informado
         int[] meuArray = new int[tamanhoArray];
 
-        // Inicializar todas as posições com o valor 0
+        //Inicializar todas as posições com o valor 0
         for (int i = 0; i < meuArray.length; i++) {
             meuArray[i] = 3;
         }
 
 
         return meuArray;
+    }
+
+    private static int[] TransformarPosicoesEmArray(int[] posicoesCorretas)
+    {
+        Scanner scanner = new Scanner(System.in);
+
+        //Solicitar um número ao usuário
+        System.out.print("Digite seu array: ");
+        String array = scanner.nextLine();
+
+
+        if(array.split(",").length != posicoesCorretas.length)
+        {
+            throw new RuntimeException("\n\nProblema: O array inserido tem tamanho diferente do permitido.\n\n");
+        }
+
+
+        //Passando pelo array do usuário
+        for(int a = 0; a < posicoesCorretas.length; a++)
+        {
+            //Verificando se posição atual é uma posição correta
+            if(posicoesCorretas[a] == 1)
+            {
+                posicoesCorretas[a] = 1;
+            }
+            else
+            {
+                //Verificando se é um inteiro válido
+                try
+                {
+                    // Tenta converter a string para um número
+                    int numero = Integer.parseInt(array.split(",")[a]);
+
+                    //Adiciona o valor que o usuário informou na posição do array
+                    posicoesCorretas[a] = numero;
+                }
+                catch (NumberFormatException e)
+                {
+                    throw new NumberFormatException("\n\nErro: A string '" + array.split(",")[a] + "' na posição " + a +" do seu array não é um número.");
+                }
+
+            }
+
+        }
+
+        return posicoesCorretas;
     }
 
 
