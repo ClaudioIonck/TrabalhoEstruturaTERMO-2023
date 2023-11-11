@@ -31,7 +31,6 @@ public class Main
 
             while(!isCorrectAwnser)
             {
-
                 MostrarArray_Int("Posições corretas", posicoesCorretas);
                 MostrarLista_String("Letras disponíveis", letrasDisponiveis);
 
@@ -55,14 +54,6 @@ public class Main
 
 
                 //Usuário verifica quais posições estão corretas
-                System.out.println("\n\n\nDigite 2 para as posições das letras que EXISTEM mas que estão em uma posição incorreta na sua palavra.");
-                System.out.println("Digite 1 para as posições das letras que EXISTEM na sua palavra.");
-                System.out.println("Digite 0 para as posições das letras que NÃO EXISTEM na sua palavra.");
-
-                System.out.println("\nDigite separando por vírgulas desta forma: 0,0,1,2,0\n");
-                MostrarArray_Int("Posições corretas", posicoesCorretas);
-
-                //Metódo para transformar resposta do usuário em um array
                 posicoesCorretas = TransformarPosicoesEmArray(posicoesCorretas);
 
                 MostrarArray_Int("Posições corretas", posicoesCorretas);
@@ -70,7 +61,6 @@ public class Main
 
 
                 //break;
-
             }
 
         }
@@ -81,7 +71,6 @@ public class Main
         {
             throw new RuntimeException("\n\nErro: Decisão inválida.\n\n");
         }
-
     }
 
 
@@ -121,8 +110,12 @@ public class Main
     }
 
 
+
+
+
+
     //Geradores--------------------------------------------------------------------------------------------------------
-    private static int[] GerarPosicoesCorretas(Scanner scanner)
+    private static int[] GerarPosicoesCorretas(Scanner scanner) //Pergunta para o usuário o tamanho das palavras
     {
         //Solicitar um número ao usuário
         System.out.print("Informe a quantidade de letras das palavras que você deseja gerar: ");
@@ -139,20 +132,32 @@ public class Main
 
         return meuArray;
     }
-
-    private static int[] TransformarPosicoesEmArray(int[] posicoesCorretas)
+    private static int[] TransformarPosicoesEmArray(int[] posicoesCorretas) //Pergunta ao usuário se as posições estão corretas
     {
+        System.out.println("\n\n\nDigite 2 para as posições das letras que EXISTEM mas que estão em uma posição incorreta na sua palavra.");
+        System.out.println("Digite 1 para as posições das letras que EXISTEM na sua palavra.");
+        System.out.println("Digite 0 para as posições das letras que NÃO EXISTEM na sua palavra.");
+
+        System.out.println("\nDigite separando por vírgulas desta forma: 0,0,1,2,0\n");
+        MostrarArray_Int("Posições corretas", posicoesCorretas);
+
+
+
+
+        //Iniciando scanner
         Scanner scanner = new Scanner(System.in);
 
         //Solicitar um número ao usuário
         System.out.print("Digite seu array: ");
         String array = scanner.nextLine();
 
-
+        //Verifica se o tamanho do array digitado está do tamanho correto
         if(array.split(",").length != posicoesCorretas.length)
         {
             throw new RuntimeException("\n\nProblema: O array inserido tem tamanho diferente do permitido.\n\n");
         }
+
+
 
 
         //Passando pelo array do usuário
@@ -178,16 +183,15 @@ public class Main
                 {
                     throw new NumberFormatException("\n\nErro: A string '" + array.split(",")[a] + "' na posição " + a +" do seu array não é um número.");
                 }
-
             }
-
         }
 
         return posicoesCorretas;
     }
 
 
-    private static ArrayList<String> GerarLetras()
+
+    private static ArrayList<String> GerarLetras() //Gera as letras iniciais
     {
         ArrayList<String> letrasDisponiveis = new ArrayList<>();
 
@@ -243,8 +247,7 @@ public class Main
 
         return letrasDisponiveis;
     }
-
-    private static ArrayList<String> GerarPalavras()
+    private static ArrayList<String> GerarPalavras() //Gera as palavras iniciais
     {
         ArrayList<String> palavrasDisponiveis = new ArrayList<>();
 
@@ -372,8 +375,11 @@ public class Main
 
 
 
+
+
+
     //Filtros----------------------------------------------------------------------------------------------------------
-    private static ArrayList<String> FiltrarPorLetra(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis)
+    private static ArrayList<String> FiltrarPorLetra(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis) //Pega uma lista de palavras e remove todas as palavras que tenham letras que não está na lista de letras
     {
         //Passando pela lista de palavras recebida
         for (int z = 0; z < palavrasDisponiveis.size(); z++)
@@ -420,8 +426,11 @@ public class Main
 
 
 
+
+
+
     //Utils------------------------------------------------------------------------------------------------------------
-    private static int TipoDeExecucao(Scanner scanner)
+    private static int TipoDeExecucao(Scanner scanner) //Pergunta ao usuário se quer executar como dev ou user
     {
 
         // Solicitar tipo de execução
@@ -432,7 +441,7 @@ public class Main
     }
 
 
-    private static void MostrarArray_Int(String nome, int[] array)
+    private static void MostrarArray_Int(String nome, int[] array) //Mostra os valores de um array de int
     {
         // Imprimir o array gerado
         System.out.println("\n" + nome + ": ");
@@ -453,7 +462,7 @@ public class Main
 
         }
     }
-    private static void MostrarLista_String(String nome, ArrayList<String> lista)
+    private static void MostrarLista_String(String nome, ArrayList<String> lista) //Mostra os valores de uma lista de string
     {
         // Imprimir a lista gerada
         System.out.println("\n" + nome + ": ");
