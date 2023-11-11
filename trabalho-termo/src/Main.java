@@ -1,6 +1,8 @@
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Scanner;
+import java.util.Random;
+
+
 
 public class Main
 {
@@ -21,33 +23,49 @@ public class Main
             ArrayList<String> palavrasDisponiveis = GerarPalavras();
 
 
-            boolean isCorrectAwnser = false;
+            MostrarLista_String("Palavras disponíveis", palavrasDisponiveis);
 
+            boolean isCorrectAwnser = false;
+            String palavraEscolhida = "";
+            String escolha = "";
 
             while(!isCorrectAwnser)
             {
 
-                MostrarLista_String("Palavras disponíveis", palavrasDisponiveis);
                 MostrarArray_Int("Posições corretas", posicoesCorretas);
                 MostrarLista_String("Letras disponíveis", letrasDisponiveis);
 
+                //Filtragem por letras disponíveis
                 ArrayList<String> palavrasFiltradas = FiltrarPorLetra(palavrasDisponiveis, letrasDisponiveis);
+                MostrarLista_String("Palavras disponíveis", palavrasFiltradas);
 
 
-                MostrarLista_String("Palavras filtradas", palavrasFiltradas);
+                //Se o usuário ainda não inseriu no prompt
+                if(posicoesCorretas[0] == 3)
+                {
+                    //Robo escolhe alguma palavra aleatória
+                    escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, true);
+                }
+                else
+                {
+                    escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, false);
+                }
+
+
+                //Usuário verifica quais posições estão corretas
+                System.out.println("\n\n\nDigite 2 para as posições das letras que EXISTEM mas que estão em uma posição incorreta na sua palavra.");
+                System.out.println("Digite 1 para as posições das letras que EXISTEM na sua palavra.");
+                System.out.println("Digite 0 para as posições das letras que NÃO EXISTEM na sua palavra.");
+
+                System.out.println("\nDigite separando por vírgulas desta forma: 0,0,1,2,0\n\n");
 
                 break;
 
             }
 
-
-
-
-
         }
         else if(modo == 2)
         {
-
         }
         else
         {
@@ -61,7 +79,39 @@ public class Main
 
 
 
-    //Geradores
+    //Decisões do robô-------------------------------------------------------------------------------------------------
+    public static String RoboEscolhePalavra(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis, boolean isRandom)
+    {
+        //Se existir palavras disponíveis
+        if(palavrasDisponiveis.size() > 0)
+        {
+
+            //Se a escolha deve ser aleatória
+            if(isRandom)
+            {
+                Random geradorAleatorio = new Random();
+
+                // Gerar um número aleatório entre 0 e o tamanho máximo de palavras disponíveis
+                int numeroAleatorio = geradorAleatorio.nextInt((palavrasDisponiveis.size() - 1));
+
+                return palavrasDisponiveis.get(numeroAleatorio);
+
+            }
+            else
+            {
+                //Implementar lógica I.A
+                return "";
+            }
+        }
+        else
+        {
+            return "";
+        }
+
+    }
+
+
+    //Geradores--------------------------------------------------------------------------------------------------------
     private static int[] GerarPosicoesCorretas(Scanner scanner)
     {
         // Solicitar um número ao usuário
@@ -73,7 +123,7 @@ public class Main
 
         // Inicializar todas as posições com o valor 0
         for (int i = 0; i < meuArray.length; i++) {
-            meuArray[i] = 0;
+            meuArray[i] = 3;
         }
 
 
@@ -266,21 +316,13 @@ public class Main
 
 
 
-    //Filtros
+    //Filtros----------------------------------------------------------------------------------------------------------
     private static ArrayList<String> FiltrarPorLetra(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis)
     {
-        //Declarando lista filtrada de retorno
-        //ArrayList<String> palavrasFiltradas = new ArrayList<>();
-
         //Passando pela lista de palavras recebida
         for (int z = 0; z < palavrasDisponiveis.size(); z++)
         {
             String palavra = palavrasDisponiveis.get(z);
-
-            if(palavra == "histérico")
-            {
-                System.out.println("aqui");
-            }
 
             //Passando pelos caracteres da palavra
             for (int a = 0; a < palavra.length(); a++) {
@@ -304,8 +346,6 @@ public class Main
                         existeLetra = true;
                         break;
                     }
-
-
                 }
 
                 //Se a letra não foi encontrada
@@ -316,18 +356,15 @@ public class Main
                     z = z - 1;
                     break;
                 }
-
             }
-
         }
-
 
         return palavrasDisponiveis;
     }
 
 
 
-    //Utils
+    //Utils------------------------------------------------------------------------------------------------------------
     private static int TipoDeExecucao(Scanner scanner)
     {
 
