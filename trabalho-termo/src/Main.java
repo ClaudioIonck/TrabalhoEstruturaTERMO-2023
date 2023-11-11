@@ -5,23 +5,40 @@ public class Main
 {
     public static void main(String[] args)
     {
-        //Gerando array de decisões
-        int[] posicoesCorretas = GerarPosicoesCorretas();
+        Scanner scanner = new Scanner(System.in);
 
-        MostrarArray_Int("Posições corretas", posicoesCorretas);
+        int modo = TipoDeExecucao(scanner);
+
+        if(modo == 1)
+        {
+
+            //Gerando array de decisões
+            int[] posicoesCorretas = GerarPosicoesCorretas(scanner);
+
+            MostrarArray_Int("Posições corretas", posicoesCorretas);
 
 
 
 
-        //Gerando letras e palavras disponíveis
-        ArrayList<String> letrasDisponiveis = GerarLetras();
-        ArrayList<String> palavrasDisponiveis = GerarPalavras();
+            //Gerando letras e palavras disponíveis
+            ArrayList<String> letrasDisponiveis = GerarLetras();
+            MostrarLista_String("Letras disponíveis", letrasDisponiveis);
+
+            ArrayList<String> palavrasDisponiveis = GerarPalavras();
+            MostrarLista_String("Palavras disponíveis", palavrasDisponiveis);
 
 
 
-        MostrarLista_String("Letras disponíveis", letrasDisponiveis);
-        MostrarLista_String("Palavras disponíveis", palavrasDisponiveis);
 
+        }
+        else if(modo == 2)
+        {
+
+        }
+        else
+        {
+            throw new RuntimeException("\n\nErro: Decisão inválida.\n\n");
+        }
 
     }
 
@@ -31,10 +48,8 @@ public class Main
 
 
     //Geradores
-    private static int[] GerarPosicoesCorretas()
+    private static int[] GerarPosicoesCorretas(Scanner scanner)
     {
-        Scanner scanner = new Scanner(System.in);
-
         // Solicitar um número ao usuário
         System.out.print("Informe a quantidade de letras das palavras que você deseja gerar: ");
         int tamanhoArray = scanner.nextInt();
@@ -47,7 +62,6 @@ public class Main
             meuArray[i] = 0;
         }
 
-        scanner.close();
 
         return meuArray;
     }
@@ -229,6 +243,17 @@ public class Main
 
 
     //Utils
+    private static int TipoDeExecucao(Scanner scanner)
+    {
+
+        // Solicitar tipo de execução
+        System.out.print("Digite 1 para executar em modo 'dev' ou 2 para executar em modo 'user': ");
+        int decisao = scanner.nextInt();
+
+        return decisao;
+    }
+
+
     private static void MostrarArray_Int(String nome, int[] array)
     {
         // Imprimir o array gerado
@@ -271,5 +296,7 @@ public class Main
 
         }
     }
+
+
 
 }
