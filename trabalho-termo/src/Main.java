@@ -19,6 +19,10 @@ public class Main
 
 
 
+        MostrarLista_String("Letras disponíveis", letrasDisponiveis);
+        MostrarLista_String("Palavras disponíveis", palavrasDisponiveis);
+
+
     }
 
 
@@ -32,7 +36,7 @@ public class Main
         Scanner scanner = new Scanner(System.in);
 
         // Solicitar um número ao usuário
-        System.out.print("Informe um número: ");
+        System.out.print("Informe a quantidade de letras das palavras que você deseja gerar: ");
         int tamanhoArray = scanner.nextInt();
 
         // Gerar array de inteiros com o tamanho informado
@@ -212,6 +216,15 @@ public class Main
 
 
 
+    //Filtros
+    private static ArrayList<String> FiltrarPorLetra(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis)
+    {
+        ArrayList<String> palavrasFiltradas = new ArrayList<>();
+
+
+
+        return palavrasFiltradas;
+    }
 
 
 
@@ -219,17 +232,43 @@ public class Main
     private static void MostrarArray_Int(String nome, int[] array)
     {
         // Imprimir o array gerado
-        System.out.println(nome + ": ");
+        System.out.println("\n" + nome + ": ");
+
+        int counter = 1;
+
         for (int valor : array) {
-            System.out.print(valor + " ");
+
+            if(counter == 5)
+            {
+                System.out.print(valor + "\n");
+                counter = 1;
+            }else
+            {
+                System.out.print(valor + " - ");
+                counter ++;
+            }
+
         }
     }
     private static void MostrarLista_String(String nome, ArrayList<String> lista)
     {
-        // Imprimir o array gerado
-        System.out.println(nome + ": ");
+        // Imprimir a lista gerada
+        System.out.println("\n" + nome + ": ");
+
+        int counter = 0;
+
         for (String valor : lista) {
-            System.out.print(valor + " ");
+
+            if(counter == 5)
+            {
+                System.out.print(valor + "\n");
+                counter = 1;
+            }else
+            {
+                System.out.print(valor + " - ");
+                counter ++;
+            }
+
         }
     }
 
