@@ -14,6 +14,7 @@ public class Main
         Scanner scanner = new Scanner(System.in);
 
         int modo = TipoDeExecucao(scanner);
+        String awnser = "";
 
         if(modo == 1)
         {
@@ -82,20 +83,119 @@ public class Main
 
 
 
+                boolean isAllCorrect = false;
 
+                for(int a = 0; a < posicoesCorretas.length; a++)
+                {
+                    if(posicoesCorretas[a] == 1)
+                    {
+                        isAllCorrect = true;
+                    }
+                    else
+                    {
+                        isAllCorrect = false;
+                        break;
+                    }
+                }
 
-                //break;
+                if(isAllCorrect)
+                {
+                    awnser = escolha;
+                    isCorrectAwnser = true;
+                }
+
             }
+
 
         }
         else if(modo == 2)
         {
-            throw new RuntimeException("\n\nModo user não implementado.\n\n");
+            //Gerando array de decisões (Pergunta o tamanho das palavras)
+            int[] posicoesCorretas = GerarPosicoesCorretas(scanner);
+
+
+            //Gerando letras e palavras disponíveis
+            ArrayList<String> letrasDisponiveis = GerarLetras();
+            ArrayList<String> palavrasDisponiveis = GerarPalavras();
+
+
+            //Filtrando palavras com o tamanho escolhido
+            palavrasDisponiveis = FiltrarPorTamanho(palavrasDisponiveis, posicoesCorretas.length);
+
+
+            boolean isCorrectAwnser = false;
+            String escolha = "";
+
+
+            //Filtragem por letras disponíveis
+            ArrayList<String> palavrasFiltradas = FiltrarPorLetra(palavrasDisponiveis, letrasDisponiveis);
+
+            //Não finaliza enquanto não encontrar a resposta
+            while(!isCorrectAwnser)
+            {
+
+                //Removendo sugestões zeradas
+                DicionarioDTO dicionario = RoboRemovePosicaoZero(palavrasFiltradas, letrasDisponiveis, posicoesCorretas, escolha);
+
+                palavrasFiltradas = dicionario.palavras;
+                letrasDisponiveis = dicionario.letras;
+
+
+
+                //Se o usuário ainda não inseriu no prompt
+                if(posicoesCorretas[0] == 3)
+                {
+                    //Robo escolhe alguma palavra aleatória
+                    escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, true, escolha);
+                }
+                else
+                {
+                    escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, false, escolha);
+                }
+
+
+                //MostrarArray_Int("Posições corretas", posicoesCorretas);
+
+                //Filtragem por letras disponíveis
+                palavrasFiltradas = FiltrarPorLetra(palavrasDisponiveis, letrasDisponiveis);
+
+
+                System.out.println("\n\nRobô escolheu: " + escolha);
+
+                //Usuário verifica quais posições estão corretas
+                posicoesCorretas = TransformarPosicoesEmArray(posicoesCorretas);
+
+
+                boolean isAllCorrect = false;
+
+                for(int a = 0; a < posicoesCorretas.length; a++)
+                {
+                    if(posicoesCorretas[a] == 1)
+                    {
+                        isAllCorrect = true;
+                    }
+                    else
+                    {
+                        isAllCorrect = false;
+                        break;
+                    }
+                }
+
+                if(isAllCorrect)
+                {
+                    awnser = escolha;
+                    isCorrectAwnser = true;
+                }
+
+            }
         }
         else
         {
             throw new RuntimeException("\n\nErro: Decisão inválida.\n\n");
         }
+
+        System.out.println("\n\nA palavra correta é: " + awnser);
+
     }
 
 
