@@ -1,7 +1,10 @@
+import Entity.DicionarioDTO;
+import jdk.jshell.spi.ExecutionControl;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Random;
-
+import java.util.concurrent.ExecutionException;
 
 
 public class Main
@@ -29,7 +32,6 @@ public class Main
             MostrarLista_String("Palavras disponíveis", palavrasDisponiveis);
 
             boolean isCorrectAwnser = false;
-            String palavraEscolhida = "";
             String escolha = "";
 
 
@@ -44,15 +46,23 @@ public class Main
                 MostrarLista_String("Palavras disponíveis", palavrasFiltradas);
 
 
+                //Removendo sugestões zeradas
+                DicionarioDTO dicionario = RoboRemovePosicaoZero(palavrasFiltradas, letrasDisponiveis, posicoesCorretas, escolha);
+
+                palavrasFiltradas = dicionario.palavras;
+                letrasDisponiveis = dicionario.letras;
+
+
+
                 //Se o usuário ainda não inseriu no prompt
                 if(posicoesCorretas[0] == 3)
                 {
                     //Robo escolhe alguma palavra aleatória
-                    escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, true);
+                    escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, true, escolha);
                 }
                 else
                 {
-                    escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, false);
+                    escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, false, escolha);
                 }
 
                 System.out.println("\n\nRobô escolheu: " + escolha);
@@ -61,7 +71,6 @@ public class Main
                 //Usuário verifica quais posições estão corretas
                 posicoesCorretas = TransformarPosicoesEmArray(posicoesCorretas);
 
-                MostrarArray_Int("Posições corretas", posicoesCorretas);
 
 
 
@@ -71,6 +80,7 @@ public class Main
         }
         else if(modo == 2)
         {
+            throw new RuntimeException("\n\nModo user não implementado.\n\n");
         }
         else
         {
@@ -84,12 +94,11 @@ public class Main
 
 
     //Decisões do robô-------------------------------------------------------------------------------------------------
-    public static String RoboEscolhePalavra(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis, boolean isRandom)
+    public static String RoboEscolhePalavra(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis, int[] posicoesUsuario, boolean isRandom, String escolhaAnterior)
     {
         //Se existir palavras disponíveis
         if(palavrasDisponiveis.size() > 0)
         {
-
             //Se a escolha deve ser aleatória
             if(isRandom)
             {
@@ -99,22 +108,137 @@ public class Main
                 int numeroAleatorio = geradorAleatorio.nextInt((palavrasDisponiveis.size() - 1));
 
                 return palavrasDisponiveis.get(numeroAleatorio);
-
             }
             else
             {
-                //Implementar lógica I.A
-                return "";
+                //Passar pelas posições corretas-------------------
+
+                Random geradorAleatorio = new Random();
+
+                palavrasDisponiveis = RoboRemovePosicaoZero(palavrasDisponiveis, letrasDisponiveis, posicoesUsuario, escolhaAnterior).palavras;
+                palavrasDisponiveis = RoboFiltraPosicaoUm(palavrasDisponiveis, posicoesUsuario, escolhaAnterior);
+
+
+                // Gerar um número aleatório entre 0 e o tamanho máximo de palavras disponíveis
+                int numeroAleatorio = geradorAleatorio.nextInt((palavrasDisponiveis.size() - 1));
+
+                return palavrasDisponiveis.get(numeroAleatorio);
             }
         }
         else
         {
             return "";
         }
-
     }
 
+    public static DicionarioDTO RoboRemovePosicaoZero(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis, int[] posicoesUsuario, String escolhaAnterior)
+    {
+        DicionarioDTO dicionario = new DicionarioDTO();
 
+        if(escolhaAnterior == "")
+        {
+            dicionario.palavras = palavrasDisponiveis;
+            dicionario.letras = letrasDisponiveis;
+
+            return  dicionario;
+        }
+
+        //Passando pelas posições sugeridas pelo usuário
+        for(int a = 0; a < posicoesUsuario.length; a++)
+        {
+            //Verificando se a letra não existe
+            if(posicoesUsuario[a] == 0)
+            {
+
+                char[] escolhaAnteriorSplit = escolhaAnterior.toCharArray();
+
+                String letraParaRemover = Character.toString(escolhaAnteriorSplit[a]);
+
+
+
+                //Passando pelas letras disponíveis
+                for(int b = 0; b < letrasDisponiveis.size(); b++)
+                {
+
+
+                    //Verificando se a letra existe na lista de letras
+                    if(letrasDisponiveis.get(b).equalsIgnoreCase(letraParaRemover))
+                    {
+
+                        //Passar pelas palavras para remover todas que tem essa letra nessa posição
+                        for(int d = 0; d < palavrasDisponiveis.size(); d++)
+                        {
+                            String palavraAtual = palavrasDisponiveis.get(d);
+
+                            //Verificando se a letra da posição incorreta é igual a da palavra atual
+                            if(Character.toString(palavraAtual.toCharArray()[a]) == letraParaRemover)
+                            {
+                                //Remova a palavra
+                                palavrasDisponiveis.remove(d);
+                                b = b - 1;
+                            }
+                        }
+
+                        letrasDisponiveis.remove(b);
+                        break;
+                    }
+
+                }
+
+
+
+
+            }
+        }
+
+
+        dicionario.palavras = palavrasDisponiveis;
+        dicionario.letras = letrasDisponiveis;
+
+        return  dicionario;
+    }
+
+    public static ArrayList<String> RoboFiltraPosicaoUm(ArrayList<String> palavrasDisponiveis, int[] posicoesUsuario, String escolhaAnterior)
+    {
+
+        ArrayList<String> palavrasDisponiveisFiltradas = new ArrayList<>();
+
+        //METODO FILTRANDO POR PROMT_APENAS VALORES 1
+        for(int a = 0; a < posicoesUsuario.length; a++)
+        {
+            //Passando pelo aray de sugestão do usuário
+            if(posicoesUsuario[a] == 1)
+            {
+                int posicaoDaLetraCorreta = a;
+
+                //Passanado pelas palavras disponíveis
+                for(int b = 0; b < palavrasDisponiveis.size(); b++)
+                {
+
+                    String palavraAtual = palavrasDisponiveis.get(b);
+
+                    //Passando pelos caracteres da palavra
+                    for(int c = 0; c < palavraAtual.length(); c++)
+                    {
+                        //Se for a mesma posição da letra correta
+                        if(c == posicaoDaLetraCorreta)
+                        {
+                            //Se for a mesma letra da escolha anterior
+                            if(escolhaAnterior.toCharArray()[c] == palavraAtual.toCharArray()[c])
+                            {
+                                //Adiciona nas palavras filtradas
+                                palavrasDisponiveisFiltradas.add(palavraAtual);
+                            }
+                        }
+                    }
+
+                }
+
+            }
+        }
+
+        return palavrasDisponiveisFiltradas;
+    }
 
 
 
@@ -443,6 +567,7 @@ public class Main
 
         return palavrasDisponiveis;
     }
+
 
 
 
