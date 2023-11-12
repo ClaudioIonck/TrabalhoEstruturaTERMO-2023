@@ -14,7 +14,7 @@ public class Main
 
         if(modo == 1)
         {
-            //Gerando array de decisões
+            //Gerando array de decisões (Pergunta o tamanho das palavras)
             int[] posicoesCorretas = GerarPosicoesCorretas(scanner);
 
 
@@ -23,12 +23,17 @@ public class Main
             ArrayList<String> palavrasDisponiveis = GerarPalavras();
 
 
+            //Filtrando palavras com o tamanho escolhido
+            palavrasDisponiveis = FiltrarPorTamanho(palavrasDisponiveis, posicoesCorretas.length);
+
             MostrarLista_String("Palavras disponíveis", palavrasDisponiveis);
 
             boolean isCorrectAwnser = false;
             String palavraEscolhida = "";
             String escolha = "";
 
+
+            //Não finaliza enquanto não encontrar a resposta
             while(!isCorrectAwnser)
             {
                 MostrarArray_Int("Posições corretas", posicoesCorretas);
@@ -50,7 +55,7 @@ public class Main
                     escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, false);
                 }
 
-
+                System.out.println("\n\nRobô escolheu: " + escolha);
 
 
                 //Usuário verifica quais posições estão corretas
@@ -379,6 +384,21 @@ public class Main
 
 
     //Filtros----------------------------------------------------------------------------------------------------------
+    private static ArrayList<String> FiltrarPorTamanho(ArrayList<String> palavrasDisponiveis, int tamanhoPermitido)
+    {
+        ArrayList<String> palavrasFiltradas = new ArrayList<>();
+
+        for(int a = 0; a < palavrasDisponiveis.size(); a++)
+        {
+            if(palavrasDisponiveis.get(a).trim().length() == tamanhoPermitido)
+            {
+                palavrasFiltradas.add(palavrasDisponiveis.get(a));
+            }
+
+        }
+
+        return palavrasFiltradas;
+    }
     private static ArrayList<String> FiltrarPorLetra(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis) //Pega uma lista de palavras e remove todas as palavras que tenham letras que não está na lista de letras
     {
         //Passando pela lista de palavras recebida
