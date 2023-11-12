@@ -35,16 +35,17 @@ public class Main
             String escolha = "";
 
 
+            MostrarArray_Int("Posições corretas", posicoesCorretas);
+            MostrarLista_String("Letras disponíveis", letrasDisponiveis);
+
+            //Filtragem por letras disponíveis
+            ArrayList<String> palavrasFiltradas = FiltrarPorLetra(palavrasDisponiveis, letrasDisponiveis);
+            MostrarLista_String("Palavras disponíveis", palavrasFiltradas);
+
+
             //Não finaliza enquanto não encontrar a resposta
             while(!isCorrectAwnser)
             {
-                MostrarArray_Int("Posições corretas", posicoesCorretas);
-                MostrarLista_String("Letras disponíveis", letrasDisponiveis);
-
-                //Filtragem por letras disponíveis
-                ArrayList<String> palavrasFiltradas = FiltrarPorLetra(palavrasDisponiveis, letrasDisponiveis);
-                MostrarLista_String("Palavras disponíveis", palavrasFiltradas);
-
 
                 //Removendo sugestões zeradas
                 DicionarioDTO dicionario = RoboRemovePosicaoZero(palavrasFiltradas, letrasDisponiveis, posicoesCorretas, escolha);
@@ -65,11 +66,20 @@ public class Main
                     escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, false, escolha);
                 }
 
-                System.out.println("\n\nRobô escolheu: " + escolha);
 
+                //MostrarArray_Int("Posições corretas", posicoesCorretas);
+                MostrarLista_String("Letras disponíveis", letrasDisponiveis);
+
+                //Filtragem por letras disponíveis
+                palavrasFiltradas = FiltrarPorLetra(palavrasDisponiveis, letrasDisponiveis);
+                MostrarLista_String("Palavras disponíveis", palavrasFiltradas);
+
+
+                System.out.println("\n\nRobô escolheu: " + escolha);
 
                 //Usuário verifica quais posições estão corretas
                 posicoesCorretas = TransformarPosicoesEmArray(posicoesCorretas);
+
 
 
 
@@ -115,8 +125,9 @@ public class Main
 
                 Random geradorAleatorio = new Random();
 
-                palavrasDisponiveis = RoboRemovePosicaoZero(palavrasDisponiveis, letrasDisponiveis, posicoesUsuario, escolhaAnterior).palavras;
+                //palavrasDisponiveis = RoboRemovePosicaoZero(palavrasDisponiveis, letrasDisponiveis, posicoesUsuario, escolhaAnterior).palavras;
                 palavrasDisponiveis = RoboFiltraPosicaoUm(palavrasDisponiveis, posicoesUsuario, escolhaAnterior);
+                palavrasDisponiveis = RoboFiltraPosicaoDois(palavrasDisponiveis, posicoesUsuario, escolhaAnterior);
 
 
                 // Gerar um número aleatório entre 0 e o tamanho máximo de palavras disponíveis
@@ -149,45 +160,36 @@ public class Main
             //Verificando se a letra não existe
             if(posicoesUsuario[a] == 0)
             {
-
                 char[] escolhaAnteriorSplit = escolhaAnterior.toCharArray();
 
                 String letraParaRemover = Character.toString(escolhaAnteriorSplit[a]);
 
 
-
                 //Passando pelas letras disponíveis
                 for(int b = 0; b < letrasDisponiveis.size(); b++)
                 {
-
-
                     //Verificando se a letra existe na lista de letras
                     if(letrasDisponiveis.get(b).equalsIgnoreCase(letraParaRemover))
                     {
-
                         //Passar pelas palavras para remover todas que tem essa letra nessa posição
                         for(int d = 0; d < palavrasDisponiveis.size(); d++)
                         {
                             String palavraAtual = palavrasDisponiveis.get(d);
+                            String letraDaPosicaoParaRemover = Character.toString(palavraAtual.toCharArray()[a]);
 
                             //Verificando se a letra da posição incorreta é igual a da palavra atual
-                            if(Character.toString(palavraAtual.toCharArray()[a]) == letraParaRemover)
+                            if(letraDaPosicaoParaRemover.equalsIgnoreCase(letraParaRemover))
                             {
                                 //Remova a palavra
                                 palavrasDisponiveis.remove(d);
-                                b = b - 1;
+                                d = d - 1;
                             }
                         }
 
                         letrasDisponiveis.remove(b);
                         break;
                     }
-
                 }
-
-
-
-
             }
         }
 
@@ -202,6 +204,7 @@ public class Main
     {
 
         ArrayList<String> palavrasDisponiveisFiltradas = new ArrayList<>();
+        boolean findValueOne = false;
 
         //METODO FILTRANDO POR PROMT_APENAS VALORES 1
         for(int a = 0; a < posicoesUsuario.length; a++)
@@ -228,6 +231,7 @@ public class Main
                             {
                                 //Adiciona nas palavras filtradas
                                 palavrasDisponiveisFiltradas.add(palavraAtual);
+                                findValueOne = true;
                             }
                         }
                     }
@@ -237,7 +241,54 @@ public class Main
             }
         }
 
-        return palavrasDisponiveisFiltradas;
+        if(findValueOne)
+        {
+            return palavrasDisponiveisFiltradas;
+        }
+        else
+        {
+            return palavrasDisponiveis;
+        }
+
+    }
+
+    public static ArrayList<String> RoboFiltraPosicaoDois(ArrayList<String> palavrasDisponiveis, int[] posicoesUsuario, String escolhaAnterior)
+    {
+        //METODO FILTRANDO POR PROMT_APENAS VALORES 1
+        for(int a = 0; a < posicoesUsuario.length; a++)
+        {
+            //Passando pelo aray de sugestão do usuário
+            if(posicoesUsuario[a] == 2)
+            {
+                int posicaoDaLetraMeiaCorreta = a;
+
+                //Passanado pelas palavras disponíveis
+                for(int b = 0; b < palavrasDisponiveis.size(); b++)
+                {
+
+                    String palavraAtual = palavrasDisponiveis.get(b);
+
+                    //Passando pelos caracteres da palavra
+                    for(int c = 0; c < palavraAtual.length(); c++)
+                    {
+                        //Se for a mesma posição da letra meia correta
+                        if(c == posicaoDaLetraMeiaCorreta)
+                        {
+                            //Se for a mesma letra da escolha anterior
+                            if(escolhaAnterior.toCharArray()[c] == palavraAtual.toCharArray()[c])
+                            {
+                                //Adiciona nas palavras filtradas
+                                palavrasDisponiveis.remove(palavraAtual);
+                            }
+                        }
+                    }
+
+                }
+
+            }
+        }
+
+        return palavrasDisponiveis;
     }
 
 
@@ -263,12 +314,13 @@ public class Main
     }
     private static int[] TransformarPosicoesEmArray(int[] posicoesCorretas) //Pergunta ao usuário se as posições estão corretas
     {
-        System.out.println("\n\n\nDigite 2 para as posições das letras que EXISTEM mas que estão em uma posição incorreta na sua palavra.");
-        System.out.println("Digite 1 para as posições das letras que EXISTEM na sua palavra.");
-        System.out.println("Digite 0 para as posições das letras que NÃO EXISTEM na sua palavra.");
+        MostrarArray_Int("Posições sugeridas", posicoesCorretas);
+
+        System.out.println("\n\nPara as posições das letras:\nDigite 2 para as que estão em posição incorreta.");
+        System.out.println("Digite 1 para as que estão corretas.");
+        System.out.println("Digite 0 para as não existem.");
 
         System.out.println("\nDigite separando por vírgulas desta forma: 0,0,1,2,0\n");
-        MostrarArray_Int("Posições corretas", posicoesCorretas);
 
 
 
@@ -610,7 +662,7 @@ public class Main
     private static void MostrarLista_String(String nome, ArrayList<String> lista) //Mostra os valores de uma lista de string
     {
         // Imprimir a lista gerada
-        System.out.println("\n" + nome + ": ");
+        System.out.println("\n\n\n" + nome + ": ");
 
         int counter = 0;
 
