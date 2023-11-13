@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 
 //Inicio do programa--------------------------------------------------------------------------------------------------
 public class Main
@@ -210,18 +211,68 @@ public class Main
     //Decisões do robô-------------------------------------------------------------------------------------------------
     public static String RoboEscolhePalavra(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis, int[] posicoesUsuario, boolean isRandom, String escolhaAnterior)
     {
+        // Função auxiliar para contar acentos
+        Function<String, Integer> contaAcentos = (String palavra) -> {
+            int count = 0;
+            for (char c : palavra.toCharArray()) {
+                if ("áéíóúàèìòùâêîôûãõäëïöü".toUpperCase().contains(String.valueOf(c))) {
+                    count++;
+                }
+            }
+            return count;
+        };
+
+        // Função auxiliar para contar vogais
+        Function<String, Integer> contaVogais = (String palavra) -> {
+            int count = 0;
+            for (char c : palavra.toCharArray()) {
+                if ("aeiou".toUpperCase().contains(String.valueOf(c))) {
+                    count++;
+                }
+            }
+            return count;
+        };
+
         //Se existir palavras disponíveis
         if(palavrasDisponiveis.size() > 0)
         {
             //Se a escolha deve ser aleatória
             if(isRandom)
             {
-                Random geradorAleatorio = new Random();
+                //1. Buscar todas as palavras que tem algum acento
+                ArrayList<String> palavrasComAcentos = new ArrayList<>();
+                for (String palavra : palavrasDisponiveis) {
+                    if (contaAcentos.apply(palavra) > 0) {
+                        palavrasComAcentos.add(palavra);
+                    }
+                }
 
-                // Gerar um número aleatório entre 0 e o tamanho máximo de palavras disponíveis
-                int numeroAleatorio = geradorAleatorio.nextInt((palavrasDisponiveis.size() - 1));
+                //2. Da lista com as palavras que tem acento, buscar as palavras que mais tem acento, ou seja que tem mais acentos em comum
+                ArrayList<String> palavrasComMaisAcentos = new ArrayList<>();
+                int maxAcentos = 0;
+                for (String palavra : palavrasComAcentos) {
+                    int acentos = contaAcentos.apply(palavra);
+                    if (acentos > maxAcentos) {
+                        maxAcentos = acentos;
+                        palavrasComMaisAcentos.clear();
+                        palavrasComMaisAcentos.add(palavra);
+                    } else if (acentos == maxAcentos) {
+                        palavrasComMaisAcentos.add(palavra);
+                    }
+                }
 
-                return palavrasDisponiveis.get(numeroAleatorio);
+                //3. da lista com as palavras que tem mais acentos em comum, buscar as palavras que mais tem vogais
+                String palavraComMaisVogais = "";
+                int maxVogais = 0;
+                for (String palavra : palavrasComMaisAcentos) {
+                    int vogais = contaVogais.apply(palavra);
+                    if (vogais > maxVogais) {
+                        maxVogais = vogais;
+                        palavraComMaisVogais = palavra;
+                    }
+                }
+
+                return palavraComMaisVogais;
             }
             else
             {
