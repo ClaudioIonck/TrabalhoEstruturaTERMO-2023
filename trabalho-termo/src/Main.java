@@ -61,10 +61,12 @@ public class Main
                 {
                     //Robo escolhe alguma palavra aleatória
                     escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, true, escolha);
+                    escolha = EscolhaOtimizada(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, true, escolha);
                 }
                 else
                 {
                     escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, false, escolha);
+                    escolha = EscolhaOtimizada(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, false, escolha);
                 }
 
 
@@ -147,10 +149,12 @@ public class Main
                 {
                     //Robo escolhe alguma palavra aleatória
                     escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, true, escolha);
+                    escolha = EscolhaOtimizada(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, true, escolha);
                 }
                 else
                 {
                     escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, false, escolha);
+                    escolha = EscolhaOtimizada(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, false, escolha);
                 }
 
 
@@ -242,6 +246,27 @@ public class Main
         }
     }
 
+    // Versão Otimazada...................
+    public static String EscolhaOtimizada(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis, int[] posicoesCorretas, boolean b, String escolha) {
+        int maximoLetrasComuns = 0;
+        String palavraEscolhida = "";
+
+        for (String palavra : palavrasDisponiveis) {
+            int letrasComuns = 0;
+            for (char letra : palavra.toCharArray()) {
+                if (letrasDisponiveis.contains(String.valueOf(letra))) {
+                    letrasComuns++;
+                }
+            }
+
+            if (letrasComuns > maximoLetrasComuns) {
+                maximoLetrasComuns = letrasComuns;
+                palavraEscolhida = palavra;
+            }
+        }
+
+        return palavraEscolhida;
+    }
     public static DicionarioDTO RoboRemovePosicaoZero(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis, int[] posicoesUsuario, String escolhaAnterior)
     {
         DicionarioDTO dicionario = new DicionarioDTO();
