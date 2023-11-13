@@ -1,10 +1,14 @@
 import Entity.DicionarioDTO;
 import jdk.jshell.spi.ExecutionControl;
-
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
+// IMPORTS PARA IMPLEMENTACAO GERAR PALAVRAS ATRAVES DE UM ARQUIVO
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 
 public class Main
@@ -528,7 +532,31 @@ public class Main
 
         return letrasDisponiveis;
     }
-    private static ArrayList<String> GerarPalavras() //Gera as palavras iniciais
+
+    /*IMPLEMENTACAO GERAR PALAVRAS ATRAVES DE UM ARQUIVO
+                      claudio_v2.0*/
+
+    private static ArrayList<String> GerarPalavras() {
+
+        File arquivo = new File("C:\\Users\\User\\Documents\\GitHub\\TrabalhoEstruturaTERMO-2023\\trabalho-termo\\src\\palavras.txt");
+
+        ArrayList<String> palavrasDisponiveis = new ArrayList<>();
+
+        try (Scanner scanner = new Scanner(arquivo)) {
+            while (scanner.hasNextLine()) {
+                palavrasDisponiveis.add(scanner.nextLine().trim());
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("Erro ao ler o arquivo de palavras: " + e.getMessage());
+        }
+
+        return palavrasDisponiveis;
+    }
+
+
+    // ! FINAL DA IMPLEMENTACAO GERAR PALAVRAS ATRAVES DE UM ARQUIVO
+
+    /*private static ArrayList<String> GerarPalavras() //Gera as palavras iniciais
     {
         ArrayList<String> palavrasDisponiveis = new ArrayList<>();
 
@@ -652,7 +680,7 @@ public class Main
 
 
         return palavrasDisponiveis;
-    }
+    }*/
 
 
 
