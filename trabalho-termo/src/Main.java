@@ -1,21 +1,16 @@
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.List;
+
 // novos
-import java.util.Arrays;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
+
 
 
 public class Main {
@@ -219,10 +214,10 @@ public class Main {
     }
 
     private static int[] GerarPosicoesCorretas() {
-        // Definir o tamanho fixo desejado (5 no seu caso)
+        // Definir o tamanho fixo desejado (5)
         int tamanhoArray = 5;
 
-        // Gerar array de inteiros com o tamanho informado
+        // Gerar array de inteiros com o tamanho 5
         int[] meuArray = new int[tamanhoArray];
 
         // Inicializar todas as posições com o valor 3
