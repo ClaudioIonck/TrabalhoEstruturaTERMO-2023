@@ -212,7 +212,6 @@ public class Main
 
 
 
-
     //Decisões do robô-------------------------------------------------------------------------------------------------
     public static String RoboEscolhePalavra(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis, int[] posicoesUsuario, boolean isRandom, String escolhaAnterior)
     {
