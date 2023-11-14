@@ -1,412 +1,222 @@
-import Entity.DicionarioDTO;
-import jdk.jshell.spi.ExecutionControl;
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.Random;
-import java.util.concurrent.ExecutionException;
-// IMPORTS PARA IMPLEMENTACAO GERAR PALAVRAS ATRAVES DE UM ARQUIVO
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
+import java.util.List;
+// novos
+import java.util.Arrays;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 
 
+public class Main {
+    private static boolean isRandom;
 
-public class Main
-{
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
         int modo = TipoDeExecucao();
-        String awnser = "";
+        String resposta = "";
 
-        if(modo == 1)
-        {
-            //Gerando array de decisões (Pergunta o tamanho das palavras)
+        if (modo == 1 || modo == 2) {
             int[] posicoesCorretas = GerarPosicoesCorretas();
-
-
-            //Gerando letras e palavras disponíveis
             ArrayList<String> letrasDisponiveis = GerarLetras();
             ArrayList<String> palavrasDisponiveis = GerarPalavras();
 
-
-            //Filtrando palavras com o tamanho escolhido
             palavrasDisponiveis = FiltrarPorTamanho(palavrasDisponiveis, posicoesCorretas.length);
 
             MostrarLista_String("Palavras disponíveis", palavrasDisponiveis);
 
-            boolean isCorrectAwnser = false;
+            boolean isCorreta = false;
             String escolha = "";
 
+            while (!isCorreta) {
+                DicionarioDTO dicionario = RoboRemovePosicaoZero(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, escolha);
 
-            MostrarArray_Int("Posições corretas", posicoesCorretas);
-            MostrarLista_String("Letras disponíveis", letrasDisponiveis);
-
-            //Filtragem por letras disponíveis
-            ArrayList<String> palavrasFiltradas = FiltrarPorLetra(palavrasDisponiveis, letrasDisponiveis);
-            MostrarLista_String("Palavras disponíveis", palavrasFiltradas);
-
-
-            //Não finaliza enquanto não encontrar a resposta
-            while(!isCorrectAwnser)
-            {
-
-                //Removendo sugestões zeradas
-                DicionarioDTO dicionario = RoboRemovePosicaoZero(palavrasFiltradas, letrasDisponiveis, posicoesCorretas, escolha);
-
-                palavrasFiltradas = dicionario.palavras;
+                palavrasDisponiveis = dicionario.palavras;
                 letrasDisponiveis = dicionario.letras;
 
-
-
-                //Se o usuário ainda não inseriu no prompt
-                if(posicoesCorretas[0] == 3)
-                {
-                    //Robo escolhe alguma palavra aleatória
+                if (posicoesCorretas[0] == 3) {
                     escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, true, escolha);
-                }
-                else
-                {
+                } else {
                     escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, false, escolha);
                 }
 
-
-                //MostrarArray_Int("Posições corretas", posicoesCorretas);
                 MostrarLista_String("Letras disponíveis", letrasDisponiveis);
-
-                //Filtragem por letras disponíveis
-                palavrasFiltradas = FiltrarPorLetra(palavrasDisponiveis, letrasDisponiveis);
-                MostrarLista_String("Palavras disponíveis", palavrasFiltradas);
-
+                palavrasDisponiveis = FiltrarPorLetra(palavrasDisponiveis, letrasDisponiveis);
+                MostrarLista_String("Palavras disponíveis", palavrasDisponiveis);
 
                 System.out.println("\n\nRobô escolheu: " + escolha);
 
-                //Usuário verifica quais posições estão corretas
                 posicoesCorretas = TransformarPosicoesEmArray(posicoesCorretas);
 
+                boolean todasCorretas = true;
 
-
-                boolean isAllCorrect = false;
-
-                for(int a = 0; a < posicoesCorretas.length; a++)
-                {
-                    if(posicoesCorretas[a] == 1)
-                    {
-                        isAllCorrect = true;
-                    }
-                    else
-                    {
-                        isAllCorrect = false;
+                for (int a = 0; a < posicoesCorretas.length; a++) {
+                    if (posicoesCorretas[a] != 1) {
+                        todasCorretas = false;
                         break;
                     }
                 }
 
-                if(isAllCorrect)
-                {
-                    awnser = escolha;
-                    isCorrectAwnser = true;
+                if (todasCorretas) {
+                    resposta = escolha;
+                    isCorreta = true;
                 }
-
             }
-
-
-        }
-        else if(modo == 2)
-        {
-            /*IMPLEMENTACAO GERAR PALAVRAS ATRAVES DE UM ARQUIVO
-                      claudio_v2.0*/
-
-            //Gerando array de decisões (Pergunta o tamanho das palavras)
-            int[] posicoesCorretas = GerarPosicoesCorretas();
-
-
-            //Gerando letras e palavras disponíveis
-            ArrayList<String> letrasDisponiveis = GerarLetras();
-            ArrayList<String> palavrasDisponiveis = GerarPalavras();
-
-
-            //Filtrando palavras com o tamanho escolhido
-            palavrasDisponiveis = FiltrarPorTamanho(palavrasDisponiveis, posicoesCorretas.length);
-
-
-            boolean isCorrectAwnser = false;
-            String escolha = "";
-
-
-            //Filtragem por letras disponíveis
-            ArrayList<String> palavrasFiltradas = FiltrarPorLetra(palavrasDisponiveis, letrasDisponiveis);
-
-            //Não finaliza enquanto não encontrar a resposta
-            while(!isCorrectAwnser)
-            {
-
-                //Removendo sugestões zeradas
-                DicionarioDTO dicionario = RoboRemovePosicaoZero(palavrasFiltradas, letrasDisponiveis, posicoesCorretas, escolha);
-
-                palavrasFiltradas = dicionario.palavras;
-                letrasDisponiveis = dicionario.letras;
-
-
-
-                //Se o usuário ainda não inseriu no prompt
-                if(posicoesCorretas[0] == 3)
-                {
-                    //Robo escolhe alguma palavra aleatória
-                    escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, true, escolha);
-                }
-                else
-                {
-                    escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, false, escolha);
-                }
-
-
-                //MostrarArray_Int("Posições corretas", posicoesCorretas);
-
-                //Filtragem por letras disponíveis
-                palavrasFiltradas = FiltrarPorLetra(palavrasDisponiveis, letrasDisponiveis);
-
-
-                System.out.println("\n\nRobô escolheu: " + escolha);
-
-                //Usuário verifica quais posições estão corretas
-                posicoesCorretas = TransformarPosicoesEmArray(posicoesCorretas);
-
-
-                boolean isAllCorrect = false;
-
-                for(int a = 0; a < posicoesCorretas.length; a++)
-                {
-                    if(posicoesCorretas[a] == 1)
-                    {
-                        isAllCorrect = true;
-                    }
-                    else
-                    {
-                        isAllCorrect = false;
-                        break;
-                    }
-                }
-
-                if(isAllCorrect)
-                {
-                    awnser = escolha;
-                    isCorrectAwnser = true;
-                }
-
-            }
-        }
-        else
-        {
+        } else {
             throw new RuntimeException("\n\nErro: Decisão inválida.\n\n");
         }
 
-        System.out.println("\n\nA palavra correta é: " + awnser);
-
+        System.out.println("\n\nA palavra correta é: " + resposta);
     }
 
+    private static DicionarioDTO RoboRemovePosicaoZero(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis, int[] posicoesCorretas, String escolhaAnterior) {
+        if (!escolhaAnterior.isEmpty()) {
+            palavrasDisponiveis.remove(escolhaAnterior);
+        }
 
+        return new DicionarioDTO(palavrasDisponiveis, letrasDisponiveis);
+    }
 
-    //Decisões do robô-------------------------------------------------------------------------------------------------
-    public static String RoboEscolhePalavra(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis, int[] posicoesUsuario, boolean isRandom, String escolhaAnterior)
-    {
-        //Se existir palavras disponíveis
-        if(palavrasDisponiveis.size() > 0)
-        {
-            //Se a escolha deve ser aleatória
-            if(isRandom)
-            {
-                Random geradorAleatorio = new Random();
+    private static int[] TransformarPosicoesEmArray(int[] posicoesCorretas) {
+        MostrarArray_Int("Posições sugeridas", posicoesCorretas);
 
-                // Gerar um número aleatório entre 0 e o tamanho máximo de palavras disponíveis
-                int numeroAleatorio = geradorAleatorio.nextInt((palavrasDisponiveis.size() - 1));
+        System.out.println("\n\nPara as posições das letras:\nDigite 2 para as que estão em posição incorreta.");
+        System.out.println("Digite 1 para as que estão corretas.");
+        System.out.println("Digite 0 para as não existem.");
 
-                return palavrasDisponiveis.get(numeroAleatorio);
-            }
-            else
-            {
-                //Passar pelas posições corretas-------------------
+        System.out.println("\nDigite separando por vírgulas desta forma: 0,0,1,2,0\n");
 
-                Random geradorAleatorio = new Random();
+        //Iniciando scanner
+        Scanner scanner = new Scanner(System.in);
 
-                //palavrasDisponiveis = RoboRemovePosicaoZero(palavrasDisponiveis, letrasDisponiveis, posicoesUsuario, escolhaAnterior).palavras;
-                palavrasDisponiveis = RoboFiltraPosicaoUm(palavrasDisponiveis, posicoesUsuario, escolhaAnterior);
-                palavrasDisponiveis = RoboFiltraPosicaoDois(palavrasDisponiveis, posicoesUsuario, escolhaAnterior);
+        //Solicitar um número ao usuário
+        System.out.print("Digite seu array: ");
+        String array = scanner.nextLine();
 
+        //Verifica se o tamanho do array digitado está do tamanho correto
+        if (array.split(",").length != posicoesCorretas.length) {
+            throw new RuntimeException("\n\nProblema: O array inserido tem tamanho diferente do permitido.\n\n");
+        }
 
-                // Gerar um número aleatório entre 0 e o tamanho máximo de palavras disponíveis
-                int numeroAleatorio = geradorAleatorio.nextInt((palavrasDisponiveis.size() - 1));
+        //Passando pelo array do usuário
+        for (int a = 0; a < posicoesCorretas.length; a++) {
+            //Verificando se posição atual é uma posição correta
+            if (posicoesCorretas[a] == 1) {
+                posicoesCorretas[a] = 1;
+            } else {
+                //Verificando se é um inteiro válido
+                try {
+                    // Tenta converter a string para um número
+                    int numero = Integer.parseInt(array.split(",")[a]);
 
-                return palavrasDisponiveis.get(numeroAleatorio);
+                    //Adiciona o valor que o usuário informou na posição do array
+                    posicoesCorretas[a] = numero;
+                } catch (NumberFormatException e) {
+                    throw new NumberFormatException("\n\nErro: A string '" + array.split(",")[a] + "' na posição " + a + " do seu array não é um número.");
+                }
             }
         }
-        else
-        {
+
+        return posicoesCorretas;
+    }
+
+    private static void MostrarArray_Int(String nome, int[] array) {
+        // Imprimir o array gerado
+        System.out.println("\n" + nome + ": ");
+
+        int counter = 1;
+
+        for (int valor : array) {
+
+            if (counter == 5) {
+                System.out.print(valor + "\n");
+                counter = 1;
+            } else {
+                System.out.print(valor + " - ");
+                counter++;
+            }
+        }
+    }
+
+    private static String RoboEscolhePalavra(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis, int[] posicoesCorretas, boolean b, String escolha) {
+        //Se existir palavras disponíveis
+        Random geradorAleatorio = new Random();
+        if (palavrasDisponiveis.size() > 0) {
+            //Se a escolha deve ser aleatória
+            if (isRandom) {
+                // Gerar um número aleatório entre 0 e o tamanho máximo de palavras disponíveis
+                int numeroAleatorio = geradorAleatorio.nextInt((palavrasDisponiveis.size() - 1));
+
+                return palavrasDisponiveis.get(numeroAleatorio);
+            } else {
+                // Passar pelas posições corretas
+                palavrasDisponiveis = RoboRemovePosicaoZero(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, escolha).palavras;
+                palavrasDisponiveis = FiltrarPorTamanho(palavrasDisponiveis, posicoesCorretas.length);
+
+                // Gerar um número aleatório entre 0 e o tamanho máximo de palavras disponíveis
+                int numeroAleatorio = geradorAleatorio.nextInt(palavrasDisponiveis.size());
+
+                return palavrasDisponiveis.get(numeroAleatorio);
+            }
+        } else {
             return "";
         }
     }
 
-    public static DicionarioDTO RoboRemovePosicaoZero(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis, int[] posicoesUsuario, String escolhaAnterior)
-    {
-        DicionarioDTO dicionario = new DicionarioDTO();
+    private static void MostrarLista_String(String titulo, ArrayList<String> lista) {
+        // Imprimir a lista gerada
+        System.out.println("\n\n\n" + titulo + ": ");
 
-        if(escolhaAnterior == "")
-        {
-            dicionario.palavras = palavrasDisponiveis;
-            dicionario.letras = letrasDisponiveis;
+        int counter = 0;
 
-            return  dicionario;
+        for (String valor : lista) {
+            if (counter == 5) {
+                System.out.print(valor + "\n");
+                counter = 1;
+            } else {
+                System.out.print(valor + " - ");
+                counter++;
+            }
         }
+    }
 
-        //Passando pelas posições sugeridas pelo usuário
-        for(int a = 0; a < posicoesUsuario.length; a++)
-        {
-            //Verificando se a letra não existe
-            if(posicoesUsuario[a] == 0)
-            {
-                char[] escolhaAnteriorSplit = escolhaAnterior.toCharArray();
+    private static ArrayList<String> FiltrarPorLetra(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis) {
+        ArrayList<String> palavrasFiltradas = new ArrayList<>();
 
-                String letraParaRemover = Character.toString(escolhaAnteriorSplit[a]);
-
-
-                //Passando pelas letras disponíveis
-                for(int b = 0; b < letrasDisponiveis.size(); b++)
-                {
-                    //Verificando se a letra existe na lista de letras
-                    if(letrasDisponiveis.get(b).equalsIgnoreCase(letraParaRemover))
-                    {
-                        //Passar pelas palavras para remover todas que tem essa letra nessa posição
-                        for(int d = 0; d < palavrasDisponiveis.size(); d++)
-                        {
-                            String palavraAtual = palavrasDisponiveis.get(d);
-                            String letraDaPosicaoParaRemover = Character.toString(palavraAtual.toCharArray()[a]);
-
-                            //Verificando se a letra da posição incorreta é igual a da palavra atual
-                            if(letraDaPosicaoParaRemover.equalsIgnoreCase(letraParaRemover))
-                            {
-                                //Remova a palavra
-                                palavrasDisponiveis.remove(d);
-                                d = d - 1;
-                            }
-                        }
-
-                        letrasDisponiveis.remove(b);
-                        break;
-                    }
+        for (String palavra : palavrasDisponiveis) {
+            for (String letra : letrasDisponiveis) {
+                if (palavra.contains(letra)) {
+                    palavrasFiltradas.add(palavra);
+                    break;
                 }
             }
         }
 
-
-        dicionario.palavras = palavrasDisponiveis;
-        dicionario.letras = letrasDisponiveis;
-
-        return  dicionario;
+        return palavrasFiltradas;
     }
 
-    public static ArrayList<String> RoboFiltraPosicaoUm(ArrayList<String> palavrasDisponiveis, int[] posicoesUsuario, String escolhaAnterior)
-    {
+    private static ArrayList<String> FiltrarPorTamanho(ArrayList<String> palavrasDisponiveis, int length) {
+        ArrayList<String> palavrasFiltradas = new ArrayList<>();
 
-        ArrayList<String> palavrasDisponiveisFiltradas = new ArrayList<>();
-        boolean findValueOne = false;
-
-        //METODO FILTRANDO POR PROMT_APENAS VALORES 1
-        for(int a = 0; a < posicoesUsuario.length; a++)
-        {
-            //Passando pelo aray de sugestão do usuário
-            if(posicoesUsuario[a] == 1)
-            {
-                int posicaoDaLetraCorreta = a;
-
-                //Passanado pelas palavras disponíveis
-                for(int b = 0; b < palavrasDisponiveis.size(); b++)
-                {
-
-                    String palavraAtual = palavrasDisponiveis.get(b);
-
-                    //Passando pelos caracteres da palavra
-                    for(int c = 0; c < palavraAtual.length(); c++)
-                    {
-                        //Se for a mesma posição da letra correta
-                        if(c == posicaoDaLetraCorreta)
-                        {
-                            //Se for a mesma letra da escolha anterior
-                            if(escolhaAnterior.toCharArray()[c] == palavraAtual.toCharArray()[c])
-                            {
-                                //Adiciona nas palavras filtradas
-                                palavrasDisponiveisFiltradas.add(palavraAtual);
-                                findValueOne = true;
-                            }
-                        }
-                    }
-
-                }
-
+        for (String palavra : palavrasDisponiveis) {
+            if (palavra.trim().length() == length) {
+                palavrasFiltradas.add(palavra);
             }
         }
 
-        if(findValueOne)
-        {
-            return palavrasDisponiveisFiltradas;
-        }
-        else
-        {
-            return palavrasDisponiveis;
-        }
-
+        return palavrasFiltradas;
     }
-
-    public static ArrayList<String> RoboFiltraPosicaoDois(ArrayList<String> palavrasDisponiveis, int[] posicoesUsuario, String escolhaAnterior)
-    {
-        //METODO FILTRANDO POR PROMT_APENAS VALORES 1
-        for(int a = 0; a < posicoesUsuario.length; a++)
-        {
-            //Passando pelo aray de sugestão do usuário
-            if(posicoesUsuario[a] == 2)
-            {
-                int posicaoDaLetraMeiaCorreta = a;
-
-                //Passanado pelas palavras disponíveis
-                for(int b = 0; b < palavrasDisponiveis.size(); b++)
-                {
-
-                    String palavraAtual = palavrasDisponiveis.get(b);
-
-                    //Passando pelos caracteres da palavra
-                    for(int c = 0; c < palavraAtual.length(); c++)
-                    {
-                        //Se for a mesma posição da letra meia correta
-                        if(c == posicaoDaLetraMeiaCorreta)
-                        {
-                            //Se for a mesma letra da escolha anterior
-                            if(escolhaAnterior.toCharArray()[c] == palavraAtual.toCharArray()[c])
-                            {
-                                //Adiciona nas palavras filtradas
-                                palavrasDisponiveis.remove(palavraAtual);
-                            }
-                        }
-                    }
-
-                }
-
-            }
-        }
-
-        return palavrasDisponiveis;
-    }
-
-
-
-
-    //Geradores--------------------------------------------------------------------------------------------------------
-
-            /*IMPLEMENTAÇÃO DE LEITURA DE ARQUIVO
-                        claudio_v2.0*/
 
     private static int[] GerarPosicoesCorretas() {
         // Definir o tamanho fixo desejado (5 no seu caso)
@@ -423,72 +233,33 @@ public class Main
         return meuArray;
     }
 
-             /*IMPLEMENTAÇÃO DE LEITURA DE ARQUIVO
-                           !FINAL!
-                        claudio_v2.0*/
-
-    private static int[] TransformarPosicoesEmArray(int[] posicoesCorretas) //Pergunta ao usuário se as posições estão corretas
-    {
-        MostrarArray_Int("Posições sugeridas", posicoesCorretas);
-
-        System.out.println("\n\nPara as posições das letras:\nDigite 2 para as que estão em posição incorreta.");
-        System.out.println("Digite 1 para as que estão corretas.");
-        System.out.println("Digite 0 para as não existem.");
-
-        System.out.println("\nDigite separando por vírgulas desta forma: 0,0,1,2,0\n");
-
-
-
-
-        //Iniciando scanner
+    private static int TipoDeExecucao() {
+        // Solicitar tipo de execução
+        System.out.print("Digite 1 para executar em modo 'dev' ou 2 para executar em modo 'user': ");
         Scanner scanner = new Scanner(System.in);
+        int decisao = scanner.nextInt();
+        return decisao;
+    }
 
-        //Solicitar um número ao usuário
-        System.out.print("Digite seu array: ");
-        String array = scanner.nextLine();
+    private static ArrayList<String> GerarPalavras() {
+        Path caminhoDoArquivo = Paths.get("C:\\Users\\User\\Documents\\GitHub\\TrabalhoEstruturaTERMO-2023\\trabalho-termo\\src\\palavras.txt");
+        ArrayList<String> palavrasDisponiveis = new ArrayList<>();
 
-        //Verifica se o tamanho do array digitado está do tamanho correto
-        if(array.split(",").length != posicoesCorretas.length)
-        {
-            throw new RuntimeException("\n\nProblema: O array inserido tem tamanho diferente do permitido.\n\n");
+        try (BufferedReader br = new BufferedReader(new FileReader(caminhoDoArquivo.toFile(), StandardCharsets.UTF_8))) {
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                palavrasDisponiveis.add(linha);
+            }
+        } catch (IOException e) {
+            System.err.println("Erro ao ler o arquivo de palavras: " + e.getMessage());
         }
 
-
-
-
-        //Passando pelo array do usuário
-        for(int a = 0; a < posicoesCorretas.length; a++)
-        {
-            //Verificando se posição atual é uma posição correta
-            if(posicoesCorretas[a] == 1)
-            {
-                posicoesCorretas[a] = 1;
-            }
-            else
-            {
-                //Verificando se é um inteiro válido
-                try
-                {
-                    // Tenta converter a string para um número
-                    int numero = Integer.parseInt(array.split(",")[a]);
-
-                    //Adiciona o valor que o usuário informou na posição do array
-                    posicoesCorretas[a] = numero;
-                }
-                catch (NumberFormatException e)
-                {
-                    throw new NumberFormatException("\n\nErro: A string '" + array.split(",")[a] + "' na posição " + a +" do seu array não é um número.");
-                }
-            }
-        }
-
-        return posicoesCorretas;
+        return palavrasDisponiveis;
     }
 
 
 
-    private static ArrayList<String> GerarLetras() //Gera as letras iniciais
-    {
+    private static ArrayList<String> GerarLetras() {
         ArrayList<String> letrasDisponiveis = new ArrayList<>();
 
         letrasDisponiveis.add("Á");
@@ -539,289 +310,17 @@ public class Main
         letrasDisponiveis.add("Y");
         letrasDisponiveis.add("Z");
 
-
-
         return letrasDisponiveis;
     }
 
-    /*IMPLEMENTACAO GERAR PALAVRAS ATRAVES DE UM ARQUIVO
-                      claudio_v2.0*/
+}
 
-    private static ArrayList<String> GerarPalavras() {
+class DicionarioDTO {
+    public ArrayList<String> palavras;
+    public ArrayList<String> letras;
 
-        Path caminhoDoArquivo = Paths.get("C:\\Users\\User\\Documents\\GitHub\\TrabalhoEstruturaTERMO-2023\\trabalho-termo\\src\\palavras.txt");
-
-        ArrayList<String> palavrasDisponiveis = new ArrayList<>();
-
-        try {
-            // Lê todas as linhas do arquivo usando UTF-8 como charset
-            palavrasDisponiveis = (ArrayList<String>) Files.readAllLines(caminhoDoArquivo, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            System.err.println("Erro ao ler o arquivo de palavras: " + e.getMessage());
-        }
-
-        return palavrasDisponiveis;
+    public DicionarioDTO(ArrayList<String> palavras, ArrayList<String> letras) {
+        this.palavras = palavras;
+        this.letras = letras;
     }
-
-
-
-    // ! FINAL DA IMPLEMENTACAO GERAR PALAVRAS ATRAVES DE UM ARQUIVO
-
-    /*private static ArrayList<String> GerarPalavras() //Gera as palavras iniciais
-    {
-        ArrayList<String> palavrasDisponiveis = new ArrayList<>();
-
-        palavrasDisponiveis.add("a");
-        palavrasDisponiveis.add("à");
-        palavrasDisponiveis.add("Aarão");
-        palavrasDisponiveis.add("aba");
-        palavrasDisponiveis.add("abacate");
-        palavrasDisponiveis.add("abacateiro");
-        palavrasDisponiveis.add("abacateiros");
-        palavrasDisponiveis.add("abacates");
-        palavrasDisponiveis.add("abacaxi");
-        palavrasDisponiveis.add("abacaxis");
-
-        palavrasDisponiveis.add("burras");
-        palavrasDisponiveis.add("burrice");
-        palavrasDisponiveis.add("burrices");
-        palavrasDisponiveis.add("burrico");
-        palavrasDisponiveis.add("burricos");
-        palavrasDisponiveis.add("burrinha");
-        palavrasDisponiveis.add("burrinhas");
-        palavrasDisponiveis.add("burrinho");
-        palavrasDisponiveis.add("burrinhos");
-        palavrasDisponiveis.add("burriquinho");
-        palavrasDisponiveis.add("burro");
-
-        palavrasDisponiveis.add("hipnotizando");
-        palavrasDisponiveis.add("hipnotizar");
-        palavrasDisponiveis.add("hipnotizara");
-        palavrasDisponiveis.add("hipnotizará");
-        palavrasDisponiveis.add("hipnotizaram");
-        palavrasDisponiveis.add("hipnotizáramos");
-        palavrasDisponiveis.add("hipnotizarão");
-        palavrasDisponiveis.add("hipnotizaras");
-        palavrasDisponiveis.add("hipnotizarás");
-        palavrasDisponiveis.add("hipnotizardes");
-        palavrasDisponiveis.add("hipnotizarei");
-        palavrasDisponiveis.add("hipnotizareis");
-        palavrasDisponiveis.add("hipnotizáreis");
-        palavrasDisponiveis.add("hipnotizarem");
-        palavrasDisponiveis.add("hipnotizaremo");
-
-        palavrasDisponiveis.add("hispânico");
-        palavrasDisponiveis.add("hispânicos");
-        palavrasDisponiveis.add("hispanismo");
-        palavrasDisponiveis.add("hispanista");
-        palavrasDisponiveis.add("hispanistas");
-        palavrasDisponiveis.add("histeria");
-        palavrasDisponiveis.add("histerias");
-        palavrasDisponiveis.add("histérica");
-        palavrasDisponiveis.add("histéricas");
-        palavrasDisponiveis.add("histérico");
-        palavrasDisponiveis.add("histéricos");
-        palavrasDisponiveis.add("histerismo");
-        palavrasDisponiveis.add("histerismos");
-        palavrasDisponiveis.add("histograma");
-
-        palavrasDisponiveis.add("objetivações");
-        palavrasDisponiveis.add("objetivado");
-        palavrasDisponiveis.add("objetivai");
-        palavrasDisponiveis.add("objetivais");
-        palavrasDisponiveis.add("objetivam");
-        palavrasDisponiveis.add("objetivamente");
-        palavrasDisponiveis.add("objetivamo");
-        palavrasDisponiveis.add("objetivamos");
-        palavrasDisponiveis.add("objetivando");
-        palavrasDisponiveis.add("objetivar");
-        palavrasDisponiveis.add("objetivara");
-        palavrasDisponiveis.add("objetivará");
-        palavrasDisponiveis.add("objetivaram");
-        palavrasDisponiveis.add("objetiváramos");
-        palavrasDisponiveis.add("objetivarão");
-        palavrasDisponiveis.add("objetivaras");
-        palavrasDisponiveis.add("objetivarás");
-        palavrasDisponiveis.add("objetivardes");
-        palavrasDisponiveis.add("objetivarei");
-
-        palavrasDisponiveis.add("sistematizaríamos");
-        palavrasDisponiveis.add("sistematizarias");
-        palavrasDisponiveis.add("sistematizaríeis");
-        palavrasDisponiveis.add("sistematizarmo");
-        palavrasDisponiveis.add("sistematizarmos");
-        palavrasDisponiveis.add("sistematizas");
-        palavrasDisponiveis.add("sistematizasse");
-        palavrasDisponiveis.add("sistematizásseis");
-        palavrasDisponiveis.add("sistematizassem");
-        palavrasDisponiveis.add("sistematizássemos");
-        palavrasDisponiveis.add("sistematizasses");
-        palavrasDisponiveis.add("sistematizaste");
-        palavrasDisponiveis.add("sistematizastes");
-        palavrasDisponiveis.add("sistematizava");
-        palavrasDisponiveis.add("sistematizavam");
-        palavrasDisponiveis.add("sistematizávamos");
-
-        palavrasDisponiveis.add("treinemos");
-        palavrasDisponiveis.add("treines");
-        palavrasDisponiveis.add("treino");
-        palavrasDisponiveis.add("treinou");
-        palavrasDisponiveis.add("trejeito");
-        palavrasDisponiveis.add("trejeitos");
-        palavrasDisponiveis.add("treliça");
-        palavrasDisponiveis.add("treliças");
-        palavrasDisponiveis.add("trem");
-        palavrasDisponiveis.add("trema");
-        palavrasDisponiveis.add("tremais");
-        palavrasDisponiveis.add("tremam");
-        palavrasDisponiveis.add("tremamo");
-        palavrasDisponiveis.add("tremamos");
-        palavrasDisponiveis.add("tremas");
-        palavrasDisponiveis.add("treme");
-        palavrasDisponiveis.add("tremê");
-        palavrasDisponiveis.add("tremedeira");
-        palavrasDisponiveis.add("tremedeiras");
-        palavrasDisponiveis.add("tremedor");
-
-        palavrasDisponiveis.add("zurres");
-        palavrasDisponiveis.add("zurro");
-        palavrasDisponiveis.add("zurros");
-        palavrasDisponiveis.add("zurrou");
-        palavrasDisponiveis.add("zurrou");
-
-
-        return palavrasDisponiveis;
-    }*/
-
-
-
-
-
-
-    //Filtros----------------------------------------------------------------------------------------------------------
-    private static ArrayList<String> FiltrarPorTamanho(ArrayList<String> palavrasDisponiveis, int tamanhoPermitido)
-    {
-        ArrayList<String> palavrasFiltradas = new ArrayList<>();
-
-        for(int a = 0; a < palavrasDisponiveis.size(); a++)
-        {
-            if(palavrasDisponiveis.get(a).trim().length() == tamanhoPermitido)
-            {
-                palavrasFiltradas.add(palavrasDisponiveis.get(a));
-            }
-
-        }
-
-        return palavrasFiltradas;
-    }
-    private static ArrayList<String> FiltrarPorLetra(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis) //Pega uma lista de palavras e remove todas as palavras que tenham letras que não está na lista de letras
-    {
-        //Passando pela lista de palavras recebida
-        for (int z = 0; z < palavrasDisponiveis.size(); z++)
-        {
-            String palavra = palavrasDisponiveis.get(z);
-
-            //Passando pelos caracteres da palavra
-            for (int a = 0; a < palavra.length(); a++) {
-
-                String caractere = Character.toString(palavra.charAt(a));
-
-                boolean existeLetra = false;
-
-                //Passando pelas letras disponíveis
-                for(int b = 0; b < letrasDisponiveis.size(); b++)
-                {
-                    String letra = letrasDisponiveis.get(b);
-
-                    String actLetraPalavra  = caractere.toUpperCase().trim();
-                    String actLetraList = letra.toUpperCase().trim();
-
-
-                    //Verificando se a letra está na lista de letras
-                    if (actLetraPalavra.equalsIgnoreCase(actLetraList))
-                    {
-                        existeLetra = true;
-                        break;
-                    }
-                }
-
-                //Se a letra não foi encontrada
-                if(!existeLetra)
-                {
-                    //Remova a palavra
-                    palavrasDisponiveis.remove(z);
-                    z = z - 1;
-                    break;
-                }
-            }
-        }
-
-        return palavrasDisponiveis;
-    }
-
-
-
-
-
-
-
-    //Utils------------------------------------------------------------------------------------------------------------
-
-    /*IMPLEMENTACAO GERAR PALAVRAS ATRAVES DE UM ARQUIVO
-                claudio_v2.0*/
-    private static int TipoDeExecucao()
-    {
-        // Solicitar tipo de execução
-        System.out.print("Digite 1 para executar em modo 'dev' ou 2 para executar em modo 'user': ");
-        Scanner scanner = new Scanner(System.in);
-        int decisao = scanner.nextInt();
-        return decisao;
-    }
-
-
-    private static void MostrarArray_Int(String nome, int[] array) //Mostra os valores de um array de int
-    {
-        // Imprimir o array gerado
-        System.out.println("\n" + nome + ": ");
-
-        int counter = 1;
-
-        for (int valor : array) {
-
-            if(counter == 5)
-            {
-                System.out.print(valor + "\n");
-                counter = 1;
-            }else
-            {
-                System.out.print(valor + " - ");
-                counter ++;
-            }
-
-        }
-    }
-    private static void MostrarLista_String(String nome, ArrayList<String> lista) //Mostra os valores de uma lista de string
-    {
-        // Imprimir a lista gerada
-        System.out.println("\n\n\n" + nome + ": ");
-
-        int counter = 0;
-
-        for (String valor : lista) {
-
-            if(counter == 5)
-            {
-                System.out.print(valor + "\n");
-                counter = 1;
-            }else
-            {
-                System.out.print(valor + " - ");
-                counter ++;
-            }
-
-        }
-    }
-
-
-
 }
