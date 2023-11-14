@@ -16,13 +16,13 @@ public class Main
     {
         Scanner scanner = new Scanner(System.in);
 
-        int modo = TipoDeExecucao(scanner);
+        int modo = TipoDeExecucao();
         String awnser = "";
 
         if(modo == 1)
         {
             //Gerando array de decisões (Pergunta o tamanho das palavras)
-            int[] posicoesCorretas = GerarPosicoesCorretas(scanner);
+            int[] posicoesCorretas = GerarPosicoesCorretas();
 
 
             //Gerando letras e palavras disponíveis
@@ -114,7 +114,7 @@ public class Main
         else if(modo == 2)
         {
             //Gerando array de decisões (Pergunta o tamanho das palavras)
-            int[] posicoesCorretas = GerarPosicoesCorretas(scanner);
+            int[] posicoesCorretas = GerarPosicoesCorretas();
 
 
             //Gerando letras e palavras disponíveis
@@ -200,8 +200,6 @@ public class Main
         System.out.println("\n\nA palavra correta é: " + awnser);
 
     }
-
-
 
 
 
@@ -398,23 +396,29 @@ public class Main
 
 
     //Geradores--------------------------------------------------------------------------------------------------------
-    private static int[] GerarPosicoesCorretas(Scanner scanner) //Pergunta para o usuário o tamanho das palavras
-    {
-        //Solicitar um número ao usuário
-        System.out.print("Informe a quantidade de letras das palavras que você deseja gerar: ");
-        int tamanhoArray = scanner.nextInt();
 
-        //Gerar array de inteiros com o tamanho informado
+            /*IMPLEMENTAÇÃO DE LEITURA DE ARQUIVO
+                        claudio_v2.0*/
+
+    private static int[] GerarPosicoesCorretas() {
+        // Definir o tamanho fixo desejado (5 no seu caso)
+        int tamanhoArray = 5;
+
+        // Gerar array de inteiros com o tamanho informado
         int[] meuArray = new int[tamanhoArray];
 
-        //Inicializar todas as posições com o valor 0
+        // Inicializar todas as posições com o valor 3
         for (int i = 0; i < meuArray.length; i++) {
             meuArray[i] = 3;
         }
 
-
         return meuArray;
     }
+
+             /*IMPLEMENTAÇÃO DE LEITURA DE ARQUIVO
+                           !FINAL!
+                        claudio_v2.0*/
+
     private static int[] TransformarPosicoesEmArray(int[] posicoesCorretas) //Pergunta ao usuário se as posições estão corretas
     {
         MostrarArray_Int("Posições sugeridas", posicoesCorretas);
@@ -754,13 +758,15 @@ public class Main
 
 
     //Utils------------------------------------------------------------------------------------------------------------
-    private static int TipoDeExecucao(Scanner scanner) //Pergunta ao usuário se quer executar como dev ou user
-    {
 
+    /*IMPLEMENTACAO GERAR PALAVRAS ATRAVES DE UM ARQUIVO
+                claudio_v2.0*/
+    private static int TipoDeExecucao()
+    {
         // Solicitar tipo de execução
         System.out.print("Digite 1 para executar em modo 'dev' ou 2 para executar em modo 'user': ");
+        Scanner scanner = new Scanner(System.in);
         int decisao = scanner.nextInt();
-
         return decisao;
     }
 
