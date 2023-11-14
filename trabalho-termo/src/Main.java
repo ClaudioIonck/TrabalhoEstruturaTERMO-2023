@@ -7,8 +7,7 @@ import java.util.concurrent.ExecutionException;
 // IMPORTS PARA IMPLEMENTACAO GERAR PALAVRAS ATRAVES DE UM ARQUIVO
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Scanner;
+
 
 
 public class Main
