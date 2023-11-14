@@ -2,9 +2,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
+
+import Entity.DicionarioDTO;
 
 // novos
 
@@ -17,7 +17,6 @@ public class Main {
     private static boolean isRandom;
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
 
         int modo = TipoDeExecucao();
         String resposta = "";
@@ -40,11 +39,7 @@ public class Main {
                 palavrasDisponiveis = dicionario.palavras;
                 letrasDisponiveis = dicionario.letras;
 
-                if (posicoesCorretas[0] == 3) {
-                    escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, true, escolha);
-                } else {
-                    escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, false, escolha);
-                }
+                escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, escolha);
 
                 MostrarLista_String("Letras disponíveis", letrasDisponiveis);
                 palavrasDisponiveis = FiltrarPorLetra(palavrasDisponiveis, letrasDisponiveis);
@@ -52,12 +47,12 @@ public class Main {
 
                 System.out.println("\n\nRobô escolheu: " + escolha);
 
-                posicoesCorretas = TransformarPosicoesEmArray(posicoesCorretas);
+                TransformarPosicoesEmArray(posicoesCorretas);
 
                 boolean todasCorretas = true;
 
-                for (int a = 0; a < posicoesCorretas.length; a++) {
-                    if (posicoesCorretas[a] != 1) {
+                for (int posicoesCorreta : posicoesCorretas) {
+                    if (posicoesCorreta != 1) {
                         todasCorretas = false;
                         break;
                     }
@@ -75,16 +70,66 @@ public class Main {
         System.out.println("\n\nA palavra correta é: " + resposta);
     }
 
-    private static DicionarioDTO RoboRemovePosicaoZero(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis, int[] posicoesCorretas, String escolhaAnterior) {
-        if (!escolhaAnterior.isEmpty()) {
-            palavrasDisponiveis.remove(escolhaAnterior);
+    public static DicionarioDTO RoboRemovePosicaoZero(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis, int[] posicoesUsuario, String escolhaAnterior)
+    {
+        DicionarioDTO dicionario = new DicionarioDTO();
+
+        if(Objects.equals(escolhaAnterior, ""))
+        {
+            dicionario.palavras = palavrasDisponiveis;
+            dicionario.letras = letrasDisponiveis;
+
+            return  dicionario;
         }
 
-        return new DicionarioDTO(palavrasDisponiveis, letrasDisponiveis);
+        //Passando pelas posições sugeridas pelo usuário
+        for(int a = 0; a < posicoesUsuario.length; a++)
+        {
+            //Verificando se a letra não existe
+            if(posicoesUsuario[a] == 0)
+            {
+                char[] escolhaAnteriorSplit = escolhaAnterior.toCharArray();
+
+                String letraParaRemover = Character.toString(escolhaAnteriorSplit[a]);
+
+
+                //Passando pelas letras disponíveis
+                for(int b = 0; b < letrasDisponiveis.size(); b++)
+                {
+                    //Verificando se a letra existe na lista de letras
+                    if(letrasDisponiveis.get(b).equalsIgnoreCase(letraParaRemover))
+                    {
+                        //Passar pelas palavras para remover todas que tem essa letra nessa posição
+                        for(int d = 0; d < palavrasDisponiveis.size(); d++)
+                        {
+                            String palavraAtual = palavrasDisponiveis.get(d);
+                            String letraDaPosicaoParaRemover = Character.toString(palavraAtual.toCharArray()[a]);
+
+                            //Verificando se a letra da posição incorreta é igual a da palavra atual
+                            if(letraDaPosicaoParaRemover.equalsIgnoreCase(letraParaRemover))
+                            {
+                                //Remova a palavra
+                                palavrasDisponiveis.remove(d);
+                                d = d - 1;
+                            }
+                        }
+
+                        letrasDisponiveis.remove(b);
+                        break;
+                    }
+                }
+            }
+        }
+
+
+        dicionario.palavras = palavrasDisponiveis;
+        dicionario.letras = letrasDisponiveis;
+
+        return  dicionario;
     }
 
-    private static int[] TransformarPosicoesEmArray(int[] posicoesCorretas) {
-        MostrarArray_Int("Posições sugeridas", posicoesCorretas);
+    private static void TransformarPosicoesEmArray(int[] posicoesCorretas) {
+        MostrarArray_Int(posicoesCorretas);
 
         System.out.println("\n\nPara as posições das letras:\nDigite 2 para as que estão em posição incorreta.");
         System.out.println("Digite 1 para as que estão corretas.");
@@ -123,12 +168,11 @@ public class Main {
             }
         }
 
-        return posicoesCorretas;
     }
 
-    private static void MostrarArray_Int(String nome, int[] array) {
+    private static void MostrarArray_Int(int[] array) {
         // Imprimir o array gerado
-        System.out.println("\n" + nome + ": ");
+        System.out.println("\n" + "Posições sugeridas" + ": ");
 
         int counter = 1;
 
@@ -144,10 +188,10 @@ public class Main {
         }
     }
 
-    private static String RoboEscolhePalavra(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis, int[] posicoesCorretas, boolean b, String escolha) {
+    private static String RoboEscolhePalavra(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis, int[] posicoesCorretas, String escolha) {
         //Se existir palavras disponíveis
         Random geradorAleatorio = new Random();
-        if (palavrasDisponiveis.size() > 0) {
+        if (!palavrasDisponiveis.isEmpty()) {
             //Se a escolha deve ser aleatória
             if (isRandom) {
                 // Gerar um número aleatório entre 0 e o tamanho máximo de palavras disponíveis
@@ -221,9 +265,7 @@ public class Main {
         int[] meuArray = new int[tamanhoArray];
 
         // Inicializar todas as posições com o valor 3
-        for (int i = 0; i < meuArray.length; i++) {
-            meuArray[i] = 3;
-        }
+        Arrays.fill(meuArray, 3);
 
         return meuArray;
     }
@@ -232,8 +274,7 @@ public class Main {
         // Solicitar tipo de execução
         System.out.print("Digite 1 para executar em modo 'dev' ou 2 para executar em modo 'user': ");
         Scanner scanner = new Scanner(System.in);
-        int decisao = scanner.nextInt();
-        return decisao;
+        return scanner.nextInt();
     }
 
     private static ArrayList<String> GerarPalavras() {
@@ -308,14 +349,4 @@ public class Main {
         return letrasDisponiveis;
     }
 
-}
-
-class DicionarioDTO {
-    public ArrayList<String> palavras;
-    public ArrayList<String> letras;
-
-    public DicionarioDTO(ArrayList<String> palavras, ArrayList<String> letras) {
-        this.palavras = palavras;
-        this.letras = letras;
-    }
 }
