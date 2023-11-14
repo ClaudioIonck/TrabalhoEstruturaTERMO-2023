@@ -7,6 +7,12 @@ import java.util.concurrent.ExecutionException;
 // IMPORTS PARA IMPLEMENTACAO GERAR PALAVRAS ATRAVES DE UM ARQUIVO
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.io.IOException;
 
 
 
@@ -113,6 +119,9 @@ public class Main
         }
         else if(modo == 2)
         {
+            /*IMPLEMENTACAO GERAR PALAVRAS ATRAVES DE UM ARQUIVO
+                      claudio_v2.0*/
+
             //Gerando array de decisões (Pergunta o tamanho das palavras)
             int[] posicoesCorretas = GerarPosicoesCorretas();
 
@@ -541,20 +550,20 @@ public class Main
 
     private static ArrayList<String> GerarPalavras() {
 
-        File arquivo = new File("C:\\Users\\User\\Documents\\GitHub\\TrabalhoEstruturaTERMO-2023\\trabalho-termo\\src\\palavras.txt");
+        Path caminhoDoArquivo = Paths.get("C:\\Users\\User\\Documents\\GitHub\\TrabalhoEstruturaTERMO-2023\\trabalho-termo\\src\\palavras.txt");
 
         ArrayList<String> palavrasDisponiveis = new ArrayList<>();
 
-        try (Scanner scanner = new Scanner(arquivo)) {
-            while (scanner.hasNextLine()) {
-                palavrasDisponiveis.add(scanner.nextLine().trim());
-            }
-        } catch (FileNotFoundException e) {
+        try {
+            // Lê todas as linhas do arquivo usando UTF-8 como charset
+            palavrasDisponiveis = (ArrayList<String>) Files.readAllLines(caminhoDoArquivo, StandardCharsets.UTF_8);
+        } catch (IOException e) {
             System.err.println("Erro ao ler o arquivo de palavras: " + e.getMessage());
         }
 
         return palavrasDisponiveis;
     }
+
 
 
     // ! FINAL DA IMPLEMENTACAO GERAR PALAVRAS ATRAVES DE UM ARQUIVO
