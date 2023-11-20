@@ -278,12 +278,17 @@ public class Main {
     }
 
     private static ArrayList<String> GerarPalavras() {
-        Path caminhoDoArquivo = Paths.get("C:\\Users\\User\\Documents\\GitHub\\TrabalhoEstruturaTERMO-2023\\trabalho-termo\\src\\palavras.txt");
+        System.out.println();
+        String caminhoDoArquivo = "trabalho-termo/palavras.txt";
+
         ArrayList<String> palavrasDisponiveis = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(caminhoDoArquivo.toFile(), StandardCharsets.UTF_8))) {
+        try  {
+            FileReader fileReader = new FileReader(caminhoDoArquivo);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
             String linha;
-            while ((linha = br.readLine()) != null) {
+            while ((linha = bufferedReader.readLine()) != null) {
                 palavrasDisponiveis.add(linha);
             }
         } catch (IOException e) {
