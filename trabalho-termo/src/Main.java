@@ -1,10 +1,11 @@
 import Entity.DicionarioDTO;
-import jdk.jshell.spi.ExecutionControl;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
+import java.util.Scanner;
 
 
 public class Main
@@ -24,7 +25,7 @@ public class Main
 
             //Gerando letras e palavras disponíveis
             ArrayList<String> letrasDisponiveis = GerarLetras();
-            ArrayList<String> palavrasDisponiveis = GerarPalavras();
+            ArrayList<String> palavrasDisponiveis = GerarPalavras(posicoesCorretas.length);
 
 
             //Filtrando palavras com o tamanho escolhido
@@ -116,7 +117,7 @@ public class Main
 
             //Gerando letras e palavras disponíveis
             ArrayList<String> letrasDisponiveis = GerarLetras();
-            ArrayList<String> palavrasDisponiveis = GerarPalavras();
+            ArrayList<String> palavrasDisponiveis = GerarPalavras(posicoesCorretas.length);
 
 
             //Filtrando palavras com o tamanho escolhido
@@ -528,128 +529,30 @@ public class Main
 
         return letrasDisponiveis;
     }
-    private static ArrayList<String> GerarPalavras() //Gera as palavras iniciais
+    private static ArrayList<String> GerarPalavras(int limitChar) //Gera as palavras iniciais
     {
+        String caminhoDoArquivo = "palavras.txt";
+
         ArrayList<String> palavrasDisponiveis = new ArrayList<>();
 
-        palavrasDisponiveis.add("a");
-        palavrasDisponiveis.add("à");
-        palavrasDisponiveis.add("Aarão");
-        palavrasDisponiveis.add("aba");
-        palavrasDisponiveis.add("abacate");
-        palavrasDisponiveis.add("abacateiro");
-        palavrasDisponiveis.add("abacateiros");
-        palavrasDisponiveis.add("abacates");
-        palavrasDisponiveis.add("abacaxi");
-        palavrasDisponiveis.add("abacaxis");
+        try
+        {
+            FileReader fileReader = new FileReader(caminhoDoArquivo);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
 
-        palavrasDisponiveis.add("burras");
-        palavrasDisponiveis.add("burrice");
-        palavrasDisponiveis.add("burrices");
-        palavrasDisponiveis.add("burrico");
-        palavrasDisponiveis.add("burricos");
-        palavrasDisponiveis.add("burrinha");
-        palavrasDisponiveis.add("burrinhas");
-        palavrasDisponiveis.add("burrinho");
-        palavrasDisponiveis.add("burrinhos");
-        palavrasDisponiveis.add("burriquinho");
-        palavrasDisponiveis.add("burro");
-
-        palavrasDisponiveis.add("hipnotizando");
-        palavrasDisponiveis.add("hipnotizar");
-        palavrasDisponiveis.add("hipnotizara");
-        palavrasDisponiveis.add("hipnotizará");
-        palavrasDisponiveis.add("hipnotizaram");
-        palavrasDisponiveis.add("hipnotizáramos");
-        palavrasDisponiveis.add("hipnotizarão");
-        palavrasDisponiveis.add("hipnotizaras");
-        palavrasDisponiveis.add("hipnotizarás");
-        palavrasDisponiveis.add("hipnotizardes");
-        palavrasDisponiveis.add("hipnotizarei");
-        palavrasDisponiveis.add("hipnotizareis");
-        palavrasDisponiveis.add("hipnotizáreis");
-        palavrasDisponiveis.add("hipnotizarem");
-        palavrasDisponiveis.add("hipnotizaremo");
-
-        palavrasDisponiveis.add("hispânico");
-        palavrasDisponiveis.add("hispânicos");
-        palavrasDisponiveis.add("hispanismo");
-        palavrasDisponiveis.add("hispanista");
-        palavrasDisponiveis.add("hispanistas");
-        palavrasDisponiveis.add("histeria");
-        palavrasDisponiveis.add("histerias");
-        palavrasDisponiveis.add("histérica");
-        palavrasDisponiveis.add("histéricas");
-        palavrasDisponiveis.add("histérico");
-        palavrasDisponiveis.add("histéricos");
-        palavrasDisponiveis.add("histerismo");
-        palavrasDisponiveis.add("histerismos");
-        palavrasDisponiveis.add("histograma");
-
-        palavrasDisponiveis.add("objetivações");
-        palavrasDisponiveis.add("objetivado");
-        palavrasDisponiveis.add("objetivai");
-        palavrasDisponiveis.add("objetivais");
-        palavrasDisponiveis.add("objetivam");
-        palavrasDisponiveis.add("objetivamente");
-        palavrasDisponiveis.add("objetivamo");
-        palavrasDisponiveis.add("objetivamos");
-        palavrasDisponiveis.add("objetivando");
-        palavrasDisponiveis.add("objetivar");
-        palavrasDisponiveis.add("objetivara");
-        palavrasDisponiveis.add("objetivará");
-        palavrasDisponiveis.add("objetivaram");
-        palavrasDisponiveis.add("objetiváramos");
-        palavrasDisponiveis.add("objetivarão");
-        palavrasDisponiveis.add("objetivaras");
-        palavrasDisponiveis.add("objetivarás");
-        palavrasDisponiveis.add("objetivardes");
-        palavrasDisponiveis.add("objetivarei");
-
-        palavrasDisponiveis.add("sistematizaríamos");
-        palavrasDisponiveis.add("sistematizarias");
-        palavrasDisponiveis.add("sistematizaríeis");
-        palavrasDisponiveis.add("sistematizarmo");
-        palavrasDisponiveis.add("sistematizarmos");
-        palavrasDisponiveis.add("sistematizas");
-        palavrasDisponiveis.add("sistematizasse");
-        palavrasDisponiveis.add("sistematizásseis");
-        palavrasDisponiveis.add("sistematizassem");
-        palavrasDisponiveis.add("sistematizássemos");
-        palavrasDisponiveis.add("sistematizasses");
-        palavrasDisponiveis.add("sistematizaste");
-        palavrasDisponiveis.add("sistematizastes");
-        palavrasDisponiveis.add("sistematizava");
-        palavrasDisponiveis.add("sistematizavam");
-        palavrasDisponiveis.add("sistematizávamos");
-
-        palavrasDisponiveis.add("treinemos");
-        palavrasDisponiveis.add("treines");
-        palavrasDisponiveis.add("treino");
-        palavrasDisponiveis.add("treinou");
-        palavrasDisponiveis.add("trejeito");
-        palavrasDisponiveis.add("trejeitos");
-        palavrasDisponiveis.add("treliça");
-        palavrasDisponiveis.add("treliças");
-        palavrasDisponiveis.add("trem");
-        palavrasDisponiveis.add("trema");
-        palavrasDisponiveis.add("tremais");
-        palavrasDisponiveis.add("tremam");
-        palavrasDisponiveis.add("tremamo");
-        palavrasDisponiveis.add("tremamos");
-        palavrasDisponiveis.add("tremas");
-        palavrasDisponiveis.add("treme");
-        palavrasDisponiveis.add("tremê");
-        palavrasDisponiveis.add("tremedeira");
-        palavrasDisponiveis.add("tremedeiras");
-        palavrasDisponiveis.add("tremedor");
-
-        palavrasDisponiveis.add("zurres");
-        palavrasDisponiveis.add("zurro");
-        palavrasDisponiveis.add("zurros");
-        palavrasDisponiveis.add("zurrou");
-        palavrasDisponiveis.add("zurrou");
-
+            String linha;
+            while ((linha = bufferedReader.readLine()) != null)
+            {
+                if(linha.length() == limitChar)
+                {
+                    palavrasDisponiveis.add(linha);
+                }
+            }
+        }
+        catch (IOException e)
+        {
+            System.err.println("Erro ao ler o arquivo de palavras: " + e.getMessage());
+        }
 
         return palavrasDisponiveis;
     }
