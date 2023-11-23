@@ -51,10 +51,6 @@ public class Main
             //Não finaliza enquanto não encontrar a resposta
             while(!isCorrectAwnser)
             {
-                if(!escolha.equalsIgnoreCase(""))
-                {
-                    palpites++;
-                }
 
                 //Removendo sugestões zeradas
                 DicionarioDTO dicionario = RoboRemovePosicaoZero(palavrasFiltradas, letrasDisponiveis, posicoesCorretas, escolha, palpites);
@@ -111,6 +107,44 @@ public class Main
                     awnser = escolha;
                     isCorrectAwnser = true;
                 }
+
+
+
+
+                palpites++;
+                
+                if(!escolha.equalsIgnoreCase(""))
+                {
+                    String caminhoEscrita = "historico-palavras/escolha_" + palpites + ".txt";
+
+                    // Escrevendo as palavras em um novo arquivo
+                    try
+                    {
+                        File arquivoEscrita = new File(caminhoEscrita);
+                        BufferedWriter writer = new BufferedWriter(new FileWriter(arquivoEscrita));
+
+                        writer.write("Escolha: " + escolha);
+                        writer.newLine();
+
+                        writer.write("Array usuário: " + Arrays.toString(posicoesCorretas));
+                        writer.newLine();
+
+                        for (String palavra : palavrasDisponiveis) {
+                            writer.write(palavra);
+                            writer.newLine();
+                        }
+
+                        writer.close();
+                        System.out.println("Novo arquivo criado com sucesso!");
+
+                    }
+                    catch (IOException e)
+                    {
+                        System.out.println("Erro ao escrever no arquivo: " + e.getMessage());
+                    }
+                }
+
+
 
             }
 
@@ -312,38 +346,6 @@ public class Main
                         break;
                     }
                 }
-            }
-        }
-
-
-        if(!escolhaAnterior.equalsIgnoreCase(""))
-        {
-            String caminhoEscrita = "historico-palavras/escolha_" + palpite + ".txt";
-
-            // Escrevendo as palavras em um novo arquivo
-            try
-            {
-                File arquivoEscrita = new File(caminhoEscrita);
-                BufferedWriter writer = new BufferedWriter(new FileWriter(arquivoEscrita));
-
-                writer.write("Escolha: " + escolhaAnterior);
-                writer.newLine();
-
-                writer.write("Array usuário: " + Arrays.toString(posicoesUsuario));
-                writer.newLine();
-
-                for (String palavra : palavrasDisponiveis) {
-                    writer.write(palavra);
-                    writer.newLine();
-                }
-
-                writer.close();
-                System.out.println("Novo arquivo criado com sucesso!");
-
-            }
-            catch (IOException e)
-            {
-                System.out.println("Erro ao escrever no arquivo: " + e.getMessage());
             }
         }
 
