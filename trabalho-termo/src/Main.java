@@ -18,18 +18,18 @@ public class Main
 
         if(modo == 1)
         {
-            //Gerando array de decisões (Pergunta o tamanho das palavras)
+            //2. Gerando array de decisões (Pergunta o tamanho das palavras)
             int[] posicoesCorretas = GerarPosicoesCorretas(scanner);
 
 
-            //Gerando letras
+            //3. Gerando letras
             ArrayList<String> letrasDisponiveis = GerarLetras();
 
-            //Gerando palavras disponíveis
+            //4. Gerando palavras disponíveis
             ArrayList<String> palavrasDisponiveis = GerarPalavras(posicoesCorretas.length);
 
 
-            //Filtrando palavras com o tamanho escolhido
+            //5. Filtrando palavras com o tamanho escolhido
             palavrasDisponiveis = FiltrarPorTamanho(palavrasDisponiveis, posicoesCorretas.length);
 
             MostrarLista_String("Palavras disponíveis", palavrasDisponiveis);
@@ -85,7 +85,7 @@ public class Main
                 }
                 */
 
-                //Removendo sugestões zeradas
+                //6. Removendo sugestões zeradas
                 DicionarioDTO dicionario = RoboRemovePosicaoZero(palavrasFiltradas, letrasDisponiveis, posicoesCorretas, escolha, palpites);
 
                 palavrasFiltradas = dicionario.palavras;
@@ -93,14 +93,15 @@ public class Main
 
 
 
-                //Se o usuário ainda não inseriu no prompt
+                //7. Se o usuário ainda não inseriu no prompt
                 if(posicoesCorretas[0] == 3)
                 {
-                    //Robo escolhe alguma palavra aleatória
+                    //7. Robo escolhe alguma palavra aleatória
                     escolha = RoboEscolhePalavra(palavrasFiltradas, letrasDisponiveis, posicoesCorretas, true, escolha);
                 }
                 else
                 {
+                    //7. Robo escolhe alguma palavra de forma estratégica
                     escolha = RoboEscolhePalavra(palavrasFiltradas, letrasDisponiveis, posicoesCorretas, false, escolha);
                 }
 
