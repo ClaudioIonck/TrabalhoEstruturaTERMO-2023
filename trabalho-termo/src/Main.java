@@ -1,9 +1,8 @@
 import Entity.DicionarioDTO;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -23,8 +22,10 @@ public class Main
             int[] posicoesCorretas = GerarPosicoesCorretas(scanner);
 
 
-            //Gerando letras e palavras disponíveis
+            //Gerando letras
             ArrayList<String> letrasDisponiveis = GerarLetras();
+
+            //Gerando palavras disponíveis
             ArrayList<String> palavrasDisponiveis = GerarPalavras(posicoesCorretas.length);
 
 
@@ -45,12 +46,18 @@ public class Main
             MostrarLista_String("Palavras disponíveis", palavrasFiltradas);
 
 
+            int palpites = 0;
+
             //Não finaliza enquanto não encontrar a resposta
             while(!isCorrectAwnser)
             {
+                if(!escolha.equalsIgnoreCase(""))
+                {
+                    palpites++;
+                }
 
                 //Removendo sugestões zeradas
-                DicionarioDTO dicionario = RoboRemovePosicaoZero(palavrasFiltradas, letrasDisponiveis, posicoesCorretas, escolha);
+                DicionarioDTO dicionario = RoboRemovePosicaoZero(palavrasFiltradas, letrasDisponiveis, posicoesCorretas, escolha, palpites);
 
                 palavrasFiltradas = dicionario.palavras;
                 letrasDisponiveis = dicionario.letras;
@@ -131,12 +138,18 @@ public class Main
             //Filtragem por letras disponíveis
             ArrayList<String> palavrasFiltradas = FiltrarPorLetra(palavrasDisponiveis, letrasDisponiveis);
 
+            int palpites = 0;
+
             //Não finaliza enquanto não encontrar a resposta
             while(!isCorrectAwnser)
             {
+                if(!escolha.equalsIgnoreCase(""))
+                {
+                    palpites++;
+                }
 
                 //Removendo sugestões zeradas
-                DicionarioDTO dicionario = RoboRemovePosicaoZero(palavrasFiltradas, letrasDisponiveis, posicoesCorretas, escolha);
+                DicionarioDTO dicionario = RoboRemovePosicaoZero(palavrasFiltradas, letrasDisponiveis, posicoesCorretas, escolha, palpites);
 
                 palavrasFiltradas = dicionario.palavras;
                 letrasDisponiveis = dicionario.letras;
@@ -243,11 +256,11 @@ public class Main
         }
     }
 
-    public static DicionarioDTO RoboRemovePosicaoZero(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis, int[] posicoesUsuario, String escolhaAnterior)
+    public static DicionarioDTO RoboRemovePosicaoZero(ArrayList<String> palavrasDisponiveis, ArrayList<String> letrasDisponiveis, int[] posicoesUsuario, String escolhaAnterior, int palpite)
     {
         DicionarioDTO dicionario = new DicionarioDTO();
 
-        if(escolhaAnterior == "")
+        if(escolhaAnterior.equalsIgnoreCase(""))
         {
             dicionario.palavras = palavrasDisponiveis;
             dicionario.letras = letrasDisponiveis;
@@ -261,21 +274,29 @@ public class Main
             //Verificando se a letra não existe
             if(posicoesUsuario[a] == 0)
             {
+                //Transformando em array a palavra escolhida anteriormente pelo robô
                 char[] escolhaAnteriorSplit = escolhaAnterior.toCharArray();
 
+                //Pegando a letra da palavra escolhida pelo robô na posição atual do array
                 String letraParaRemover = Character.toString(escolhaAnteriorSplit[a]);
 
 
                 //Passando pelas letras disponíveis
                 for(int b = 0; b < letrasDisponiveis.size(); b++)
                 {
+                    String letraAtual = letrasDisponiveis.get(b);
+
+
                     //Verificando se a letra existe na lista de letras
                     if(letrasDisponiveis.get(b).equalsIgnoreCase(letraParaRemover))
                     {
                         //Passar pelas palavras para remover todas que tem essa letra nessa posição
                         for(int d = 0; d < palavrasDisponiveis.size(); d++)
                         {
+                            //Pegando palavra atual da lista de palavras
                             String palavraAtual = palavrasDisponiveis.get(d);
+
+                            //Transformando palavra em array e pegando a letra da posição atual
                             String letraDaPosicaoParaRemover = Character.toString(palavraAtual.toCharArray()[a]);
 
                             //Verificando se a letra da posição incorreta é igual a da palavra atual
@@ -293,6 +314,39 @@ public class Main
                 }
             }
         }
+
+
+        if(!escolhaAnterior.equalsIgnoreCase(""))
+        {
+            String caminhoEscrita = "historico-palavras/escolha_" + palpite + ".txt";
+
+            // Escrevendo as palavras em um novo arquivo
+            try
+            {
+                File arquivoEscrita = new File(caminhoEscrita);
+                BufferedWriter writer = new BufferedWriter(new FileWriter(arquivoEscrita));
+
+                writer.write("Escolha: " + escolhaAnterior);
+                writer.newLine();
+
+                writer.write("Array usuário: " + Arrays.toString(posicoesUsuario));
+                writer.newLine();
+
+                for (String palavra : palavrasDisponiveis) {
+                    writer.write(palavra);
+                    writer.newLine();
+                }
+
+                writer.close();
+                System.out.println("Novo arquivo criado com sucesso!");
+
+            }
+            catch (IOException e)
+            {
+                System.out.println("Erro ao escrever no arquivo: " + e.getMessage());
+            }
+        }
+
 
 
         dicionario.palavras = palavrasDisponiveis;
