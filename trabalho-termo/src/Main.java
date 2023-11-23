@@ -303,27 +303,6 @@ public class Main {
     private static ArrayList<String> GerarLetras() {
         ArrayList<String> letrasDisponiveis = new ArrayList<>();
 
-        letrasDisponiveis.add("Á");
-        letrasDisponiveis.add("À");
-        letrasDisponiveis.add("Â");
-        letrasDisponiveis.add("Ã");
-        letrasDisponiveis.add("Ç");
-        letrasDisponiveis.add("É");
-        letrasDisponiveis.add("È");
-        letrasDisponiveis.add("Ê");
-        letrasDisponiveis.add("Í");
-        letrasDisponiveis.add("Ì");
-        letrasDisponiveis.add("Î");
-        letrasDisponiveis.add("Ñ");
-        letrasDisponiveis.add("Ó");
-        letrasDisponiveis.add("Ò");
-        letrasDisponiveis.add("Ô");
-        letrasDisponiveis.add("Õ");
-        letrasDisponiveis.add("Ú");
-        letrasDisponiveis.add("ú");
-        letrasDisponiveis.add("Ù");
-        letrasDisponiveis.add("ù");
-        letrasDisponiveis.add("Û");
         letrasDisponiveis.add("A");
         letrasDisponiveis.add("B");
         letrasDisponiveis.add("C");
