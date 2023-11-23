@@ -52,6 +52,39 @@ public class Main
             while(!isCorrectAwnser)
             {
 
+                /*
+                if(!escolha.equalsIgnoreCase(""))
+                {
+                    String caminhoEscrita = "historico-palavras/escolha_" + palpites + ".txt";
+
+                    // Escrevendo as palavras em um novo arquivo
+                    try
+                    {
+                        File arquivoEscrita = new File(caminhoEscrita);
+                        BufferedWriter writer = new BufferedWriter(new FileWriter(arquivoEscrita));
+
+                        writer.write("Escolha: " + escolha);
+                        writer.newLine();
+
+                        writer.write("Array usuário: " + Arrays.toString(posicoesCorretas));
+                        writer.newLine();
+
+                        for (String palavra : palavrasFiltradas) {
+                            writer.write(palavra);
+                            writer.newLine();
+                        }
+
+                        writer.close();
+                        System.out.println("Novo arquivo criado com sucesso!");
+
+                    }
+                    catch (IOException e)
+                    {
+                        System.out.println("Erro ao escrever no arquivo: " + e.getMessage());
+                    }
+                }
+                */
+
                 //Removendo sugestões zeradas
                 DicionarioDTO dicionario = RoboRemovePosicaoZero(palavrasFiltradas, letrasDisponiveis, posicoesCorretas, escolha, palpites);
 
@@ -64,11 +97,11 @@ public class Main
                 if(posicoesCorretas[0] == 3)
                 {
                     //Robo escolhe alguma palavra aleatória
-                    escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, true, escolha);
+                    escolha = RoboEscolhePalavra(palavrasFiltradas, letrasDisponiveis, posicoesCorretas, true, escolha);
                 }
                 else
                 {
-                    escolha = RoboEscolhePalavra(palavrasDisponiveis, letrasDisponiveis, posicoesCorretas, false, escolha);
+                    escolha = RoboEscolhePalavra(palavrasFiltradas, letrasDisponiveis, posicoesCorretas, false, escolha);
                 }
 
 
@@ -76,7 +109,7 @@ public class Main
                 MostrarLista_String("Letras disponíveis", letrasDisponiveis);
 
                 //Filtragem por letras disponíveis
-                palavrasFiltradas = FiltrarPorLetra(palavrasDisponiveis, letrasDisponiveis);
+                palavrasFiltradas = FiltrarPorLetra(palavrasFiltradas, letrasDisponiveis);
                 MostrarLista_String("Palavras disponíveis", palavrasFiltradas);
 
 
@@ -112,39 +145,6 @@ public class Main
 
 
                 palpites++;
-                
-                if(!escolha.equalsIgnoreCase(""))
-                {
-                    String caminhoEscrita = "historico-palavras/escolha_" + palpites + ".txt";
-
-                    // Escrevendo as palavras em um novo arquivo
-                    try
-                    {
-                        File arquivoEscrita = new File(caminhoEscrita);
-                        BufferedWriter writer = new BufferedWriter(new FileWriter(arquivoEscrita));
-
-                        writer.write("Escolha: " + escolha);
-                        writer.newLine();
-
-                        writer.write("Array usuário: " + Arrays.toString(posicoesCorretas));
-                        writer.newLine();
-
-                        for (String palavra : palavrasDisponiveis) {
-                            writer.write(palavra);
-                            writer.newLine();
-                        }
-
-                        writer.close();
-                        System.out.println("Novo arquivo criado com sucesso!");
-
-                    }
-                    catch (IOException e)
-                    {
-                        System.out.println("Erro ao escrever no arquivo: " + e.getMessage());
-                    }
-                }
-
-
 
             }
 
@@ -294,6 +294,9 @@ public class Main
     {
         DicionarioDTO dicionario = new DicionarioDTO();
 
+        ArrayList<String> palavrasRemovidas = new ArrayList<>();
+
+
         if(escolhaAnterior.equalsIgnoreCase(""))
         {
             dicionario.palavras = palavrasDisponiveis;
@@ -308,44 +311,91 @@ public class Main
             //Verificando se a letra não existe
             if(posicoesUsuario[a] == 0)
             {
-                //Transformando em array a palavra escolhida anteriormente pelo robô
+                //1. Transformando em array a palavra escolhida anteriormente pelo robô
                 char[] escolhaAnteriorSplit = escolhaAnterior.toCharArray();
 
-                //Pegando a letra da palavra escolhida pelo robô na posição atual do array
+                //2. Pegando a letra da palavra escolhida pelo robô na posição atual do array
                 String letraParaRemover = Character.toString(escolhaAnteriorSplit[a]);
 
 
-                //Passando pelas letras disponíveis
+                //3. Passando pelas letras disponíveis
                 for(int b = 0; b < letrasDisponiveis.size(); b++)
                 {
                     String letraAtual = letrasDisponiveis.get(b);
 
 
-                    //Verificando se a letra existe na lista de letras
+                    //4. Verificando se a letra existe na lista de letras
                     if(letrasDisponiveis.get(b).equalsIgnoreCase(letraParaRemover))
                     {
-                        //Passar pelas palavras para remover todas que tem essa letra nessa posição
+                        //5. Passar pelas palavras para remover todas que tem essa letra nessa posição
                         for(int d = 0; d < palavrasDisponiveis.size(); d++)
                         {
-                            //Pegando palavra atual da lista de palavras
+                            //6. Pegando palavra atual da lista de palavras
                             String palavraAtual = palavrasDisponiveis.get(d);
 
                             //Transformando palavra em array e pegando a letra da posição atual
-                            String letraDaPosicaoParaRemover = Character.toString(palavraAtual.toCharArray()[a]);
+                            //String letraDaPosicaoParaRemover = Character.toString(palavraAtual.toCharArray()[a]);
 
-                            //Verificando se a letra da posição incorreta é igual a da palavra atual
-                            if(letraDaPosicaoParaRemover.equalsIgnoreCase(letraParaRemover))
+                            //7. Transformando palavra em array
+                            char[] palavraAtual_Array = palavraAtual.toCharArray();
+
+                            //8. Passando pelo array da palavra
+                            for(int e = 0; e < palavraAtual_Array.length; e++)
                             {
-                                //Remova a palavra
-                                palavrasDisponiveis.remove(d);
-                                d = d - 1;
+                                //9. Pegando a letra atual
+                                String letraDaPosicaoParaRemover = Character.toString(palavraAtual_Array[e]);
+
+
+                                //10. Verificando se a letra da posição incorreta é igual a da palavra atual
+                                if(letraDaPosicaoParaRemover.equalsIgnoreCase(letraParaRemover))
+                                {
+                                    //11. Remova a palavra
+                                    System.out.println("Palavra removida: " + palavraAtual);
+                                    palavrasRemovidas.add(palavraAtual);
+                                    palavrasDisponiveis.remove(d);
+                                    d = d - 1;
+                                    break;
+                                }
                             }
+
                         }
 
                         letrasDisponiveis.remove(b);
                         break;
                     }
                 }
+            }
+        }
+
+
+        if(!escolhaAnterior.equalsIgnoreCase(""))
+        {
+            String caminhoEscrita = "historico-palavras/removidos_escolha_" + palpite + ".txt";
+
+            // Escrevendo as palavras em um novo arquivo
+            try
+            {
+                File arquivoEscrita = new File(caminhoEscrita);
+                BufferedWriter writer = new BufferedWriter(new FileWriter(arquivoEscrita));
+
+                writer.write("Escolha: " + escolhaAnterior);
+                writer.newLine();
+
+                writer.write("Array usuário: " + Arrays.toString(posicoesUsuario));
+                writer.newLine();
+                writer.newLine();
+
+                for (String palavra : palavrasRemovidas) {
+                    writer.write(palavra);
+                    writer.newLine();
+                }
+
+                writer.close();
+
+            }
+            catch (IOException e)
+            {
+                System.out.println("Erro ao escrever no arquivo: " + e.getMessage());
             }
         }
 
