@@ -85,12 +85,16 @@ public class Main
                 }
                 */
 
+
+                palavrasFiltradas = RoboFiltraPosicaoUm(palavrasFiltradas, posicoesCorretas, escolha, palpites);
+
                 //6. Removendo sugestões zeradas
                 DicionarioDTO dicionario = RoboRemovePosicaoZero(palavrasFiltradas, letrasDisponiveis, posicoesCorretas, escolha, palpites);
 
                 palavrasFiltradas = dicionario.palavras;
                 letrasDisponiveis = dicionario.letras;
 
+                palavrasFiltradas = RoboFiltraPosicaoDois(palavrasFiltradas, posicoesCorretas, escolha, palpites);
 
 
                 //7. Se o usuário ainda não inseriu no prompt
@@ -121,22 +125,23 @@ public class Main
 
 
 
-                boolean isAllCorrect = false;
+
+                int countPosition = 0;
 
                 for(int a = 0; a < posicoesCorretas.length; a++)
                 {
+
                     if(posicoesCorretas[a] == 1)
                     {
-                        isAllCorrect = true;
+                        countPosition++;
                     }
                     else
                     {
-                        isAllCorrect = false;
                         break;
                     }
                 }
 
-                if(isAllCorrect)
+                if(countPosition == posicoesCorretas.length)
                 {
                     awnser = escolha;
                     isCorrectAwnser = true;
@@ -275,8 +280,8 @@ public class Main
                 Random geradorAleatorio = new Random();
 
                 //palavrasDisponiveis = RoboRemovePosicaoZero(palavrasDisponiveis, letrasDisponiveis, posicoesUsuario, escolhaAnterior).palavras;
-                palavrasDisponiveis = RoboFiltraPosicaoUm(palavrasDisponiveis, posicoesUsuario, escolhaAnterior);
-                palavrasDisponiveis = RoboFiltraPosicaoDois(palavrasDisponiveis, posicoesUsuario, escolhaAnterior);
+                //palavrasDisponiveis = RoboFiltraPosicaoUm(palavrasDisponiveis, posicoesUsuario, escolhaAnterior);
+                //palavrasDisponiveis = RoboFiltraPosicaoDois(palavrasDisponiveis, posicoesUsuario, escolhaAnterior);
 
 
                 // Gerar um número aleatório entre 0 e o tamanho máximo de palavras disponíveis
@@ -371,7 +376,7 @@ public class Main
 
         if(!escolhaAnterior.equalsIgnoreCase(""))
         {
-            String caminhoEscrita = "historico-palavras/removidos_escolha_" + palpite + ".txt";
+            String caminhoEscrita = "historico-palavras/removidos0_escolha_" + palpite + ".txt";
 
             // Escrevendo as palavras em um novo arquivo
             try
@@ -408,16 +413,18 @@ public class Main
         return  dicionario;
     }
 
-    public static ArrayList<String> RoboFiltraPosicaoUm(ArrayList<String> palavrasDisponiveis, int[] posicoesUsuario, String escolhaAnterior)
+    public static ArrayList<String> RoboFiltraPosicaoUm(ArrayList<String> palavrasDisponiveis, int[] posicoesUsuario, String escolhaAnterior, int palpite)
     {
 
         ArrayList<String> palavrasDisponiveisFiltradas = new ArrayList<>();
+        ArrayList<String> palavrasRemovidas = new ArrayList<>();
+
         boolean findValueOne = false;
 
-        //METODO FILTRANDO POR PROMT_APENAS VALORES 1
+        //Passando pelo array de sugestão do usuário
         for(int a = 0; a < posicoesUsuario.length; a++)
         {
-            //Passando pelo aray de sugestão do usuário
+            //Verificando se o valor é 1
             if(posicoesUsuario[a] == 1)
             {
                 int posicaoDaLetraCorreta = a;
@@ -425,8 +432,9 @@ public class Main
                 //Passanado pelas palavras disponíveis
                 for(int b = 0; b < palavrasDisponiveis.size(); b++)
                 {
-
                     String palavraAtual = palavrasDisponiveis.get(b);
+
+                    boolean findLyric = false;
 
                     //Passando pelos caracteres da palavra
                     for(int c = 0; c < palavraAtual.length(); c++)
@@ -438,16 +446,69 @@ public class Main
                             if(escolhaAnterior.toCharArray()[c] == palavraAtual.toCharArray()[c])
                             {
                                 //Adiciona nas palavras filtradas
-                                palavrasDisponiveisFiltradas.add(palavraAtual);
-                                findValueOne = true;
+                                if(!palavrasDisponiveisFiltradas.contains(palavraAtual))
+                                {
+                                    palavrasDisponiveisFiltradas.add(palavraAtual);
+                                    findValueOne = true;
+                                    findLyric = true;
+                                }
                             }
                         }
+                    }
+
+                    //Se nenhuma letra correta foi encontrada na palavra atual, é uma palavra removida
+                    if(!findLyric)
+                    {
+                        palavrasRemovidas.add(palavraAtual);
                     }
 
                 }
 
             }
         }
+
+
+
+        if(!escolhaAnterior.equalsIgnoreCase(""))
+        {
+            //Se foi encontrado algum valor 1, então essas palavras foram removidas
+            if(findValueOne)
+            {
+                if(palavrasRemovidas.size() > 0)
+                {
+                    String caminhoEscrita = "historico-palavras/removidos1_escolha_" + palpite + ".txt";
+
+                    // Escrevendo as palavras em um novo arquivo
+                    try
+                    {
+                        File arquivoEscrita = new File(caminhoEscrita);
+                        BufferedWriter writer = new BufferedWriter(new FileWriter(arquivoEscrita));
+
+                        writer.write("Escolha: " + escolhaAnterior);
+                        writer.newLine();
+
+                        writer.write("Array usuário: " + Arrays.toString(posicoesUsuario));
+                        writer.newLine();
+                        writer.newLine();
+
+                        for (String palavra : palavrasRemovidas) {
+                            writer.write(palavra);
+                            writer.newLine();
+                        }
+
+                        writer.close();
+
+                    }
+                    catch (IOException e)
+                    {
+                        System.out.println("Erro ao escrever no arquivo: " + e.getMessage());
+                    }
+                }
+            }
+        }
+
+
+
 
         if(findValueOne)
         {
@@ -460,12 +521,16 @@ public class Main
 
     }
 
-    public static ArrayList<String> RoboFiltraPosicaoDois(ArrayList<String> palavrasDisponiveis, int[] posicoesUsuario, String escolhaAnterior)
+    public static ArrayList<String> RoboFiltraPosicaoDois(ArrayList<String> palavrasDisponiveis, int[] posicoesUsuario, String escolhaAnterior, int palpite)
     {
-        //METODO FILTRANDO POR PROMT_APENAS VALORES 1
+
+        ArrayList<String> palavrasRemovidas = new ArrayList<>();
+
+
+        //Passando pelo array de sugestão do usuário
         for(int a = 0; a < posicoesUsuario.length; a++)
         {
-            //Passando pelo aray de sugestão do usuário
+            //Verificando se a posição é valor 2
             if(posicoesUsuario[a] == 2)
             {
                 int posicaoDaLetraMeiaCorreta = a;
@@ -486,6 +551,7 @@ public class Main
                             if(escolhaAnterior.toCharArray()[c] == palavraAtual.toCharArray()[c])
                             {
                                 //Adiciona nas palavras filtradas
+                                palavrasRemovidas.add(palavraAtual);
                                 palavrasDisponiveis.remove(palavraAtual);
                             }
                         }
@@ -495,6 +561,44 @@ public class Main
 
             }
         }
+
+
+
+
+        if(!escolhaAnterior.equalsIgnoreCase(""))
+        {
+            if(palavrasRemovidas.size() > 0)
+            {
+                String caminhoEscrita = "historico-palavras/removidos2_escolha_" + palpite + ".txt";
+
+                // Escrevendo as palavras em um novo arquivo
+                try
+                {
+                    File arquivoEscrita = new File(caminhoEscrita);
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(arquivoEscrita));
+
+                    writer.write("Escolha: " + escolhaAnterior);
+                    writer.newLine();
+
+                    writer.write("Array usuário: " + Arrays.toString(posicoesUsuario));
+                    writer.newLine();
+                    writer.newLine();
+
+                    for (String palavra : palavrasRemovidas) {
+                        writer.write(palavra);
+                        writer.newLine();
+                    }
+
+                    writer.close();
+
+                }
+                catch (IOException e)
+                {
+                    System.out.println("Erro ao escrever no arquivo: " + e.getMessage());
+                }
+            }
+        }
+
 
         return palavrasDisponiveis;
     }
