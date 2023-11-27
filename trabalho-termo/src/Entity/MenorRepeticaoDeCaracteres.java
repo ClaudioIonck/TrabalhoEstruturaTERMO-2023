@@ -46,3 +46,5 @@ public class MenorRepeticaoDeCaracteres {
         return menorRepeticao == 1; // Retorna verdadeiro se houver apenas uma repetição do caractere.
     }
 }
+
+
