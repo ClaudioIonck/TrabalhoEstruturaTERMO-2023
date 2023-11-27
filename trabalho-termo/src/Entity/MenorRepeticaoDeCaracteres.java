@@ -23,6 +23,7 @@ public class MenorRepeticaoDeCaracteres {
                 String[] palavras = linha.split("\\s+"); // Divide a linha em palavras
 
                 for (String palavra : palavras) {
+                    palavra = palavra.toUpperCase(); // Transforma a palavra em maiúsculas
                     if (temApenasUnicas(palavra)) {
                         escreverPalavra(escritor, palavra);
                     }
@@ -54,6 +55,7 @@ public class MenorRepeticaoDeCaracteres {
         escritor.write(palavra + "\n");
     }
 }
+
 
 
 
