@@ -3,6 +3,8 @@ package Entity;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MenorRepeticaoDeCaracteres {
 
@@ -17,7 +19,7 @@ public class MenorRepeticaoDeCaracteres {
                 String[] palavras = linha.split("\\s+"); // Divide a linha em palavras
 
                 for (String palavra : palavras) {
-                    if (temMenosRepeticao(palavra)) {
+                    if (temApenasUnicas(palavra)) {
                         System.out.println(palavra);
                     }
                 }
@@ -29,22 +31,18 @@ public class MenorRepeticaoDeCaracteres {
         }
     }
 
-    private static boolean temMenosRepeticao(String palavra) {
-        int[] contagemCaracteres = new int[256]; // Assume caracteres ASCII
+    private static boolean temApenasUnicas(String palavra) {
+        Set<Character> caracteres = new HashSet<>();
 
         for (char c : palavra.toCharArray()) {
-            contagemCaracteres[c]++;
-        }
-
-        int menorRepeticao = Integer.MAX_VALUE;
-        for (int contagem : contagemCaracteres) {
-            if (contagem > 0 && contagem < menorRepeticao) {
-                menorRepeticao = contagem;
+            if (!caracteres.add(c)) {
+                return false; // Retorna false se encontrar um caractere repetido.
             }
         }
 
-        return menorRepeticao == 1; // Retorna verdadeiro se houver apenas uma repetição do caractere.
+        return true;
     }
 }
+
 
 
