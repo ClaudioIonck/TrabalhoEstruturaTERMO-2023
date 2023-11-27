@@ -1,7 +1,9 @@
 package Entity;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -9,10 +11,12 @@ import java.util.Set;
 public class MenorRepeticaoDeCaracteres {
 
     public static void main(String[] args) {
-        String nomeArquivo = "trabalho-termo/palavras.txt";
+        String nomeArquivoEntrada = "trabalho-termo/palavras.txt";
+        String nomeArquivoSaida = "trabalho-termo/palavrasiniciais.txt";
 
         try {
-            BufferedReader leitor = new BufferedReader(new FileReader(nomeArquivo));
+            BufferedReader leitor = new BufferedReader(new FileReader(nomeArquivoEntrada));
+            BufferedWriter escritor = new BufferedWriter(new FileWriter(nomeArquivoSaida));
 
             String linha;
             while ((linha = leitor.readLine()) != null) {
@@ -20,12 +24,15 @@ public class MenorRepeticaoDeCaracteres {
 
                 for (String palavra : palavras) {
                     if (temApenasUnicas(palavra)) {
-                        System.out.println(palavra);
+                        escreverPalavra(escritor, palavra);
                     }
                 }
             }
 
             leitor.close();
+            escritor.close();
+
+            System.out.println("Arquivo " + nomeArquivoSaida + " gerado com sucesso.");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,7 +49,12 @@ public class MenorRepeticaoDeCaracteres {
 
         return true;
     }
+
+    private static void escreverPalavra(BufferedWriter escritor, String palavra) throws IOException {
+        escritor.write(palavra + "\n");
+    }
 }
+
 
 
 
