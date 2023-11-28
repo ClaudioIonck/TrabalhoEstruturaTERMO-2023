@@ -99,6 +99,7 @@ public class Main {
         String palavraSecreta = palavrasIniciais.get(random.nextInt(palavrasIniciais.size()));
 
         boolean jogoGanho = false;
+        int tentativas = 0;
         List<String> palavrasUsadas = new ArrayList<>();
 
         while (!jogoGanho) {
@@ -124,7 +125,12 @@ public class Main {
                 palavrasUsadas.add(palavraSecreta);
             } else {
                 // NAO HA MAIS PALAVRAS DISPONIVEIS
-                System.out.println("Não há mais palavras disponíveis. O jogo foi encerrado.");
+                if (feedback.equals("1,1,1,1,1")) {
+                    // Se o feedback for "1,1,1,1,1", informar ao usuário que a palavra está correta
+                    System.out.println("Parabéns, você acertou! A palavra é: " + palavraSecreta);
+                } else {
+                    System.out.println("Não há mais palavras disponíveis. O jogo foi encerrado.");
+                }
                 break;
             }
 
@@ -151,14 +157,22 @@ public class Main {
         // EXCLUIR PALAVRAS COM ALGUM FEEDBACK DE 0 PARA UMA LETRA ESPECiFICA
         for (int i = 0; i < feedbackArray.length; i++) {
             if (feedbackArray[i] == 0) {
-                char letra = palavraSecreta.charAt(i);
-                filtroDePalavras.removeIf(p -> p.indexOf(letra) != -1);
+                final char letra = palavraSecreta.charAt(i);
+                int finalI = i;
+                List<String> palavrasFiltradas = new ArrayList<>();
+
+                for (String palavra : filtroDePalavras) {
+                    if (palavra.indexOf(letra) == -1 || palavra.indexOf(letra) == finalI) {
+                        palavrasFiltradas.add(palavra);
+                    }
+                }
+
+                filtroDePalavras = palavrasFiltradas;
             }
         }
 
         return filtroDePalavras;
     }
-
 
 
     // METODO PARA VERIFICAR SE A PALAVRA EH VALIDA:
