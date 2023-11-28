@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Arrays;
+import java.util.Random;
 
 
 public class Main {
@@ -94,7 +95,8 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         // ESCOLHA UMA PALAVRA INICIAL DA LISTA
-        String palavraSecreta = palavrasIniciais.get(0);
+        Random random = new Random();
+        String palavraSecreta = palavrasIniciais.get(random.nextInt(palavrasIniciais.size()));
 
         boolean jogoGanho = false;
 
