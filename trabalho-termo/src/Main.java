@@ -99,9 +99,9 @@ public class Main {
         String palavraSecreta = palavrasIniciais.get(random.nextInt(palavrasIniciais.size()));
 
         boolean jogoGanho = false;
-        int tentativas = 0;
+        List<String> palavrasUsadas = new ArrayList<>();
 
-        while (!jogoGanho && tentativas < 5) { // ENQUANTO O JOGO NAO FOR GANHO E O NUMERO DE TENTATIVAS FOR MENOR QUE 5
+        while (!jogoGanho) {
             System.out.println("Palavra secreta: " + palavraSecreta);
 
             // SOLICITAR FEEDBACK AO USUARIO
@@ -111,20 +111,19 @@ public class Main {
             // FILTRAR PALAVRAS COM BASE NO FEEDBACK
             List<String> filtroDePalavras = filtraPalavra(palavraSecreta, feedback);
 
+            // EXCLUIR PALAVRAS JÁ USADAS DA LISTA DE FILTRO
+            filtroDePalavras.removeAll(palavrasUsadas);
+
             // SE HOUVER APENAS UMA PALAVRA NA LISTA FILTRADA, O JOGO FOI GANHO
             if (filtroDePalavras.size() == 1) {
                 jogoGanho = true;
                 System.out.println("Parabéns, você acertou! A palavra é: " + filtroDePalavras.get(0));
             } else {
-                // ESCOLHER A PROXIMA PALAVRA PARA TENTATIVA
+                // ESCOLHER A PRÓXIMA PALAVRA PARA TENTATIVA ALEATÓRIA
                 palavraSecreta = filtroDePalavras.get(random.nextInt(filtroDePalavras.size()));
+                palavrasUsadas.add(palavraSecreta);
             }
 
-            tentativas++;
-        }
-        // SE O JOGO NAO FOI GANHO, O USUARIO ATINGIU O LIMITE DE TENTATIVAS
-        if (!jogoGanho) {
-            System.out.println("Você atingiu o limite de tentativas. A palavra secreta era: " + palavraSecreta);
         }
 
         scanner.close();
