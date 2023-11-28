@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import Entity.DicionarioDTO;
 
 import java.io.*;
@@ -11,8 +12,37 @@ public class Main
 {
     public static void main(String[] args)
     {
-        Scanner scanner = new Scanner(System.in);
+=======
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
+public class Main {
+
+    private Set<String> letrasDisponiveis;
+    private Set<String> palavrasIniciais;
+
+    public Main() {
+        letrasDisponiveis = new HashSet<>(Arrays.asList("A B C D E F G H I J K L M N O P Q R S T U V W X Y Z".split(" ")));
+        palavrasIniciais = new HashSet<>();
+    }
+
+    public void loadPalavrasIniciais(String filePath) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            palavrasIniciais = reader.lines().map(String::toUpperCase).collect(Collectors.toSet());
+        }
+    }
+
+    public void iniciarJogo() {
+>>>>>>> Stashed changes
+        Scanner scanner = new Scanner(System.in);
+        Random random = new Random();
+
+<<<<<<< Updated upstream
         int modo = TipoDeExecucao(scanner);
         String awnser = "";
 
@@ -241,6 +271,56 @@ public class Main
                     isCorrectAwnser = true;
                 }
 
+=======
+        List<String> palavrasList = new ArrayList<>(palavrasIniciais);
+
+        while (!palavrasIniciais.isEmpty()) {
+            String chuteInicial = palavrasList.get(random.nextInt(palavrasList.size()));
+
+            System.out.println("Chute inicial: " + chuteInicial);
+            System.out.println("Esta palavra existe? (s/n)");
+            String respostaChute = scanner.nextLine().toLowerCase();
+
+            if (respostaChute.equals("s")) {
+                for (int i = 0; i < chuteInicial.length(); i++) {
+                    final int index = i;
+                    final String chuteFinal = chuteInicial;
+
+                    System.out.println("Para a letra " + chuteInicial.charAt(i) + ", digite: \n" +
+                            "2 se a letra existe mas está na posição errada, \n" +
+                            "1 se a letra existe e está na posição correta, \n" +
+                            "0 se a letra não existe.");
+                    int resposta = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline left-over
+
+                    if (resposta == 0) {
+                        letrasDisponiveis.remove(String.valueOf(chuteFinal.charAt(index)));
+                        palavrasIniciais = palavrasIniciais.stream()
+                                .filter(p -> !p.contains(String.valueOf(chuteFinal.charAt(index))))
+                                .collect(Collectors.toSet());
+                    } else if (resposta == 2) {
+                        palavrasIniciais = palavrasIniciais.stream()
+                                .filter(p -> p.indexOf(chuteFinal.charAt(index)) != index)
+                                .collect(Collectors.toSet());
+                    }
+                }
+            } else {
+                palavrasIniciais.remove(chuteInicial);
+            }
+
+            if (!palavrasIniciais.isEmpty()) {
+                palavrasList = new ArrayList<>(palavrasIniciais);
+            } else {
+                System.out.println("Não há mais palavras disponíveis.");
+                break;
+            }
+
+            System.out.println("Deseja continuar? (s/n)");
+            String resposta = scanner.nextLine().toLowerCase();
+
+            if (!resposta.equals("s")) {
+                break;
+>>>>>>> Stashed changes
             }
         }
         else
@@ -252,6 +332,7 @@ public class Main
 
     }
 
+<<<<<<< Updated upstream
 
 
 
@@ -898,3 +979,17 @@ public class Main
 
 
 }
+=======
+    public static void main(String[] args) {
+        Main jogo = new Main();
+
+        try {
+            jogo.loadPalavrasIniciais("C:\\Users\\gabri\\Documentos\\TrabalhoEstruturaTERMO-2023\\trabalho-termo\\src\\palavrasiniciais.txt");
+            jogo.iniciarJogo();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+ 
+>>>>>>> Stashed changes
