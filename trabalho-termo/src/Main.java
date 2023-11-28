@@ -275,19 +275,92 @@ public class Main
             }
             else
             {
-                //Passar pelas posições corretas-------------------
 
+                char[] letrasEncontradas = new char[escolhaAnterior.length()];
+
+
+                //Buscar as letras encontradas
+                char[] escolhaAnteriorChar = escolhaAnterior.toCharArray();
+
+                int totalLetrasIguais = 0;
+
+                //Passando pela palavra anterior
+                for(int a = 0; a < escolhaAnteriorChar.length; a++)
+                {
+                    //Verificando se a posição do array do usuário tem valor 1
+                    if(posicoesUsuario[a] == 1)
+                    {
+                        //Buscar a letra da posição atual
+                        char letraAtual = escolhaAnteriorChar[a];
+
+                        //Adicionar letra encontrada na posição correta
+                        letrasEncontradas[a] = letraAtual;
+
+                        totalLetrasIguais++;
+                    }
+                }
+
+
+                if(totalLetrasIguais > 0)
+                {
+
+                    ArrayList<String> palavrasPossiveis = new ArrayList<>();
+
+                    //Passar pela lista de palavras-------------------
+                    for(int a = 0; a < palavrasDisponiveis.size(); a++)
+                    {
+                        //Transformando palavra em array
+                        char[] palavraAtual = palavrasDisponiveis.get(a).toCharArray();
+
+
+                        int totalLetrasEncontradas = 0;
+
+                        //Passando por cada letra da palavra
+                        for(int b = 0; b < palavraAtual.length; b++)
+                        {
+                            //Verificando se a posição do array do usuário tem valor 1
+                            if(palavraAtual[b] == letrasEncontradas[b])
+                            {
+
+                                totalLetrasEncontradas++;
+
+                            }
+                        }
+
+                        //Verificando se foi encontrado o mínimo de letras
+                        if(totalLetrasEncontradas >= totalLetrasIguais)
+                        {
+                            //Adiciono a palavra nas palavras possíveis
+                            palavrasPossiveis.add(palavrasDisponiveis.get(a));
+                        }
+
+                    }
+
+                    return palavrasPossiveis.get(0);
+
+                }
+                else
+                {
+                    Random geradorAleatorio = new Random();
+
+                    // Gerar um número aleatório entre 0 e o tamanho máximo de palavras disponíveis
+                    int numeroAleatorio = geradorAleatorio.nextInt((palavrasDisponiveis.size() - 1));
+
+                    return palavrasDisponiveis.get(numeroAleatorio);
+                }
+
+
+                /*
                 Random geradorAleatorio = new Random();
-
-                //palavrasDisponiveis = RoboRemovePosicaoZero(palavrasDisponiveis, letrasDisponiveis, posicoesUsuario, escolhaAnterior).palavras;
-                //palavrasDisponiveis = RoboFiltraPosicaoUm(palavrasDisponiveis, posicoesUsuario, escolhaAnterior);
-                //palavrasDisponiveis = RoboFiltraPosicaoDois(palavrasDisponiveis, posicoesUsuario, escolhaAnterior);
 
 
                 // Gerar um número aleatório entre 0 e o tamanho máximo de palavras disponíveis
                 int numeroAleatorio = geradorAleatorio.nextInt((palavrasDisponiveis.size() - 1));
 
                 return palavrasDisponiveis.get(numeroAleatorio);
+                */
+
+
             }
         }
         else
