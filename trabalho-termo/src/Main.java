@@ -148,6 +148,14 @@ public class Main {
             }
         }
 
+        // EXCLUIR PALAVRAS COM ALGUM FEEDBACK DE 0 PARA UMA LETRA ESPECiFICA
+        for (int i = 0; i < feedbackArray.length; i++) {
+            if (feedbackArray[i] == 0) {
+                char letra = palavraSecreta.charAt(i);
+                filtroDePalavras.removeIf(p -> p.indexOf(letra) != -1);
+            }
+        }
+
         return filtroDePalavras;
     }
 
