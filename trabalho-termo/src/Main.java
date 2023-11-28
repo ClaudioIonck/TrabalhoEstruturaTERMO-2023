@@ -99,8 +99,9 @@ public class Main {
         String palavraSecreta = palavrasIniciais.get(random.nextInt(palavrasIniciais.size()));
 
         boolean jogoGanho = false;
+        int tentativas = 0;
 
-        while (!jogoGanho) {
+        while (!jogoGanho && tentativas < 5) { // ENQUANTO O JOGO NAO FOR GANHO E O NUMERO DE TENTATIVAS FOR MENOR QUE 5
             System.out.println("Palavra secreta: " + palavraSecreta);
 
             // SOLICITAR FEEDBACK AO USUARIO
@@ -116,8 +117,14 @@ public class Main {
                 System.out.println("Parabéns, você acertou! A palavra é: " + filtroDePalavras.get(0));
             } else {
                 // ESCOLHER A PROXIMA PALAVRA PARA TENTATIVA
-                palavraSecreta = filtroDePalavras.get(0);
+                palavraSecreta = filtroDePalavras.get(random.nextInt(filtroDePalavras.size()));
             }
+
+            tentativas++;
+        }
+        // SE O JOGO NAO FOI GANHO, O USUARIO ATINGIU O LIMITE DE TENTATIVAS
+        if (!jogoGanho) {
+            System.out.println("Você atingiu o limite de tentativas. A palavra secreta era: " + palavraSecreta);
         }
 
         scanner.close();
@@ -140,6 +147,7 @@ public class Main {
 
         return filtroDePalavras;
     }
+
 
 
     // METODO PARA VERIFICAR SE A PALAVRA EH VALIDA:
