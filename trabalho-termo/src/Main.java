@@ -118,10 +118,14 @@ public class Main {
             if (filtroDePalavras.size() == 1) {
                 jogoGanho = true;
                 System.out.println("Parabéns, você acertou! A palavra é: " + filtroDePalavras.get(0));
-            } else {
-                // ESCOLHER A PRÓXIMA PALAVRA PARA TENTATIVA ALEATÓRIA
+            } else if (!filtroDePalavras.isEmpty()) {
+                // ESCOLHER A PROXIMA PALAVRA PARA TENTATIVA ALEATÓRIA
                 palavraSecreta = filtroDePalavras.get(random.nextInt(filtroDePalavras.size()));
                 palavrasUsadas.add(palavraSecreta);
+            } else {
+                // NAO HA MAIS PALAVRAS DISPONIVEIS
+                System.out.println("Não há mais palavras disponíveis. O jogo foi encerrado.");
+                break;
             }
 
         }
