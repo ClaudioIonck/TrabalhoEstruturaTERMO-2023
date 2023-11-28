@@ -275,13 +275,15 @@ public class Main
             }
             else
             {
-
+                //Criando char para colocar as letras encontradas em suas posições
                 char[] letrasEncontradas = new char[escolhaAnterior.length()];
 
 
-                //Buscar as letras encontradas
+                //1. Buscando letras encontradas
+                //Transformando a escolha anterior em array de char
                 char[] escolhaAnteriorChar = escolhaAnterior.toCharArray();
 
+                //Contaddor de quantas letras corretas foram encontradas
                 int totalLetrasIguais = 0;
 
                 //Passando pela palavra anterior
@@ -301,9 +303,10 @@ public class Main
                 }
 
 
+                //Se encontrou alguma letra correta
                 if(totalLetrasIguais > 0)
                 {
-
+                    //Criando lista das possíveis palavras
                     ArrayList<String> palavrasPossiveis = new ArrayList<>();
 
                     //Passar pela lista de palavras-------------------
@@ -312,7 +315,7 @@ public class Main
                         //Transformando palavra em array
                         char[] palavraAtual = palavrasDisponiveis.get(a).toCharArray();
 
-
+                        //Contador de letras encontradas
                         int totalLetrasEncontradas = 0;
 
                         //Passando por cada letra da palavra
@@ -321,9 +324,7 @@ public class Main
                             //Verificando se a posição do array do usuário tem valor 1
                             if(palavraAtual[b] == letrasEncontradas[b])
                             {
-
                                 totalLetrasEncontradas++;
-
                             }
                         }
 
@@ -336,6 +337,7 @@ public class Main
 
                     }
 
+                    //Retorna a primeira palavra
                     return palavrasPossiveis.get(0);
 
                 }
