@@ -275,19 +275,94 @@ public class Main
             }
             else
             {
-                //Passar pelas posições corretas-------------------
+                //Criando char para colocar as letras encontradas em suas posições
+                char[] letrasEncontradas = new char[escolhaAnterior.length()];
 
+
+                //1. Buscando letras encontradas
+                //Transformando a escolha anterior em array de char
+                char[] escolhaAnteriorChar = escolhaAnterior.toCharArray();
+
+                //Contaddor de quantas letras corretas foram encontradas
+                int totalLetrasIguais = 0;
+
+                //Passando pela palavra anterior
+                for(int a = 0; a < escolhaAnteriorChar.length; a++)
+                {
+                    //Verificando se a posição do array do usuário tem valor 1
+                    if(posicoesUsuario[a] == 1)
+                    {
+                        //Buscar a letra da posição atual
+                        char letraAtual = escolhaAnteriorChar[a];
+
+                        //Adicionar letra encontrada na posição correta
+                        letrasEncontradas[a] = letraAtual;
+
+                        totalLetrasIguais++;
+                    }
+                }
+
+
+                //Se encontrou alguma letra correta
+                if(totalLetrasIguais > 0)
+                {
+                    //Criando lista das possíveis palavras
+                    ArrayList<String> palavrasPossiveis = new ArrayList<>();
+
+                    //Passar pela lista de palavras-------------------
+                    for(int a = 0; a < palavrasDisponiveis.size(); a++)
+                    {
+                        //Transformando palavra em array
+                        char[] palavraAtual = palavrasDisponiveis.get(a).toCharArray();
+
+                        //Contador de letras encontradas
+                        int totalLetrasEncontradas = 0;
+
+                        //Passando por cada letra da palavra
+                        for(int b = 0; b < palavraAtual.length; b++)
+                        {
+                            //Verificando se a posição do array do usuário tem valor 1
+                            if(palavraAtual[b] == letrasEncontradas[b])
+                            {
+                                totalLetrasEncontradas++;
+                            }
+                        }
+
+                        //Verificando se foi encontrado o mínimo de letras
+                        if(totalLetrasEncontradas >= totalLetrasIguais)
+                        {
+                            //Adiciono a palavra nas palavras possíveis
+                            palavrasPossiveis.add(palavrasDisponiveis.get(a));
+                        }
+
+                    }
+
+                    //Retorna a primeira palavra
+                    return palavrasPossiveis.get(0);
+
+                }
+                else
+                {
+                    Random geradorAleatorio = new Random();
+
+                    // Gerar um número aleatório entre 0 e o tamanho máximo de palavras disponíveis
+                    int numeroAleatorio = geradorAleatorio.nextInt((palavrasDisponiveis.size() - 1));
+
+                    return palavrasDisponiveis.get(numeroAleatorio);
+                }
+
+
+                /*
                 Random geradorAleatorio = new Random();
-
-                //palavrasDisponiveis = RoboRemovePosicaoZero(palavrasDisponiveis, letrasDisponiveis, posicoesUsuario, escolhaAnterior).palavras;
-                //palavrasDisponiveis = RoboFiltraPosicaoUm(palavrasDisponiveis, posicoesUsuario, escolhaAnterior);
-                //palavrasDisponiveis = RoboFiltraPosicaoDois(palavrasDisponiveis, posicoesUsuario, escolhaAnterior);
 
 
                 // Gerar um número aleatório entre 0 e o tamanho máximo de palavras disponíveis
                 int numeroAleatorio = geradorAleatorio.nextInt((palavrasDisponiveis.size() - 1));
 
                 return palavrasDisponiveis.get(numeroAleatorio);
+                */
+
+
             }
         }
         else
